@@ -57,7 +57,7 @@ class A2SStream:
         self._socket.sendto(packet, self.address)
 
     def recv(self):
-        packet = self._socket.recv(4096)
+        packet = self._socket.recv(65535)
         header = packet[:4]
         data = packet[4:]
         if header == HEADER_SIMPLE:
