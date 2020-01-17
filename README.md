@@ -42,7 +42,7 @@ Example output shown may be shortened.
 
 ```py
 >>> import a2s
->>> address = ("stomping.kinofemu.net", 27015)
+>>> address = ("stomping.kinofnemu.net", 27015)
 >>> a2s.info(address)
 SourceInfo(protocol=17, server_name=" 24/7 Dustbowl :: Nemu's Stomping Ground", map_name='cp_dustbowl',
 folder='tf', game='Team Fortress', app_id=440, player_count=31, max_players=33, bot_count=21,
@@ -61,6 +61,10 @@ game_id=440, ping=0.253798684978392)
  'mp_allowNPCs': '1', 'mp_autocrosshair': '1', 'mp_autoteambalance': '0', 'mp_disable_respawn_times': '0',
  'mp_fadetoblack': '0'}
 ```
+
+## Tested Games
+
+Team Fortress 2, Counter-Strike: Global Offensive
 
 ## License
 
