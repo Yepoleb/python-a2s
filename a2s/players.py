@@ -2,7 +2,8 @@ import io
 from typing import List
 
 from a2s.exceptions import BrokenMessageError
-from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
+from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING, \
+    DEFAULT_RETRIES
 from a2s.a2sstream import request
 from a2s.byteio import ByteReader
 from a2s.datacls import DataclsMeta
@@ -29,7 +30,7 @@ def players(address, timeout=DEFAULT_TIMEOUT,
             encoding=DEFAULT_ENCODING):
     return players_impl(address, timeout, encoding)
 
-def players_impl(address, timeout, encoding, challenge=0):
+def players_impl(address, timeout, encoding, challenge=0, retries=0):
     resp_data = request(
         address, b"\x55" + challenge.to_bytes(4, "little"), timeout)
     reader = ByteReader(
@@ -37,11 +38,12 @@ def players_impl(address, timeout, encoding, challenge=0):
 
     response_type = reader.read_uint8()
     if response_type == A2S_CHALLENGE_RESPONSE:
-        if challenge != 0:
+        if retries >= DEFAULT_RETRIES:
             raise BrokenMessageError(
                 "Server keeps sending challenge responses")
-        challenge = reader.read_int32()
-        return players_impl(address, timeout, encoding, challenge)
+        challenge = reader.read_uint32()
+        return players_impl(
+            address, timeout, encoding, challenge, retries + 1)
 
     if response_type != A2S_PLAYER_RESPONSE:
         raise BrokenMessageError(

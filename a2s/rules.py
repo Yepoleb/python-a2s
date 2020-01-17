@@ -1,7 +1,8 @@
 import io
 
 from a2s.exceptions import BrokenMessageError
-from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
+from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING, \
+    DEFAULT_RETRIES
 from a2s.a2sstream import request
 from a2s.byteio import ByteReader
 
@@ -13,7 +14,7 @@ A2S_CHALLENGE_RESPONSE = 0x41
 def rules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
     return rules_impl(address, timeout, encoding)
 
-def rules_impl(address, timeout, encoding, challenge=0):
+def rules_impl(address, timeout, encoding, challenge=0, retries=0):
     resp_data = request(
         address, b"\x56" + challenge.to_bytes(4, "little"), timeout)
     reader = ByteReader(
@@ -31,11 +32,12 @@ def rules_impl(address, timeout, encoding, challenge=0):
 
     response_type = reader.read_uint8()
     if response_type == A2S_CHALLENGE_RESPONSE:
-        if challenge != 0:
+        if retries >= DEFAULT_RETRIES:
             raise BrokenMessageError(
                 "Server keeps sending challenge responses")
-        challenge = reader.read_int32()
-        return rules_impl(address, timeout, encoding, challenge)
+        challenge = reader.read_uint32()
+        return rules_impl(
+            address, timeout, encoding, challenge, retries + 1)
 
     if response_type != A2S_RULES_RESPONSE:
         raise BrokenMessageError(
