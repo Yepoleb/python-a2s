@@ -5,7 +5,7 @@ Library to query Source and GoldSource servers. Rewrite of the
 
 ## Requirements
 
-Just Python 3.5+
+Python >=3.5, no external dependencies
 
 ## API
 
