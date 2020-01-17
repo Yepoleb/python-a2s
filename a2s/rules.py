@@ -1,7 +1,7 @@
 import io
 
 from a2s.exceptions import BrokenMessageError
-from a2s.defaults import default_encoding, default_timeout
+from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
 from a2s.a2sstream import request
 from a2s.byteio import ByteReader
 
@@ -10,16 +10,14 @@ from a2s.byteio import ByteReader
 A2S_RULES_RESPONSE = 0x45
 A2S_CHALLENGE_RESPONSE = 0x41
 
-class RulesResponse:
-    def __init__(self, rule_count, rules):
-        self.rule_count = rule_count
-        self.rules = rules
+def rules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+    return rules_impl(address, timeout, encoding)
 
-def rules(address, challenge=0, timeout=default_timeout):
+def rules_impl(address, timeout, encoding, challenge=0):
     resp_data = request(
         address, b"\x56" + challenge.to_bytes(4, "little"), timeout)
     reader = ByteReader(
-        io.BytesIO(resp_data), endian="<", encoding=default_encoding)
+        io.BytesIO(resp_data), endian="<", encoding=encoding)
 
     # A2S_RESPONSE misteriously seems to add a FF FF FF FF
     # long to the beginning of the response which isn't
@@ -33,21 +31,21 @@ def rules(address, challenge=0, timeout=default_timeout):
 
     response_type = reader.read_uint8()
     if response_type == A2S_CHALLENGE_RESPONSE:
+        if challenge != 0:
+            raise BrokenMessageError(
+                "Server keeps sending challenge responses")
         challenge = reader.read_int32()
-        return rules(address, challenge, timeout)
+        return rules_impl(address, timeout, encoding, challenge)
 
     if response_type != A2S_RULES_RESPONSE:
         raise BrokenMessageError(
             "Invalid response type: " + str(response_type))
 
     rule_count = reader.read_int16()
-    resp = RulesResponse(
-        rule_count=rule_count,
-        rules={
-            reader.read_cstring(): reader.read_cstring()
-            for rule_num in range(rule_count)
-        }
+    # Have to use tuples to preserve evaluation order
+    resp = dict(
+        (reader.read_cstring(), reader.read_cstring())
+        for rule_num in range(rule_count)
     )
 
     return resp
-

@@ -2,9 +2,9 @@ import socket
 import bz2
 import io
 
-from a2s.defaults import default_encoding, default_timeout
 from a2s.exceptions import BrokenMessageError
 from a2s.byteio import ByteReader
+
 
 
 HEADER_SIMPLE = b"\xFF\xFF\xFF\xFF"
@@ -27,7 +27,7 @@ class A2SFragment:
 
 def decode_fragment(data):
     reader = ByteReader(
-        io.BytesIO(data), endian="<", encoding=default_encoding)
+        io.BytesIO(data), endian="<", encoding="utf-8")
     frag = A2SFragment(
         message_id=reader.read_uint32(),
         fragment_count=reader.read_uint8(),

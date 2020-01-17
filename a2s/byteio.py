@@ -70,7 +70,7 @@ class ByteReader():
     def read_char(self):
         char = self.unpack_one("c")
         if self.encoding is not None:
-            return char.decode(self.encoding)
+            return char.decode(self.encoding, errors="replace")
         else:
             return char
 
@@ -84,12 +84,9 @@ class ByteReader():
                 string += c
 
         if self.encoding is not None:
-            return string.decode(self.encoding)
+            return string.decode(self.encoding, errors="replace")
         else:
             return string
-
-    def read_ip(self):
-        return ".".join(str(o) for o in self.unpack("BBBB"))
 
 
 class ByteWriter():
