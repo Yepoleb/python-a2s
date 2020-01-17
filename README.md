@@ -7,6 +7,10 @@ Library to query Source and GoldSource servers. Rewrite of the
 
 Python >=3.5, no external dependencies
 
+## Install
+
+`pip3 install python-a2s` or `python3 setup.py install`
+
 ## API
 
 ### Functions
