@@ -21,10 +21,12 @@ server_type='d', platform='l', password_protected=True, vac_enabled=True, versio
 edf=177, port=27015, steam_id=85568392920040090, stv_port=None, stv_name=None,
 keywords='brutus,celt,couch,cp,dustbowl,increased_maxplayers,nemu,nocrits,nodmgspread,pony,replays,vanilla',
 game_id=440, ping=0.253798684978392)
+
 >>> a2s.players(address)
 [Player(index=0, name='Brutus', score=34, duration=836.4749145507812),
  Player(index=0, name='RageQuit', score=6, duration=1080.8099365234375),
  Player(index=0, name="Screamin' Eagles", score=1, duration=439.8598327636719)]
+
 >>> a2s.rules(address)
 {'coop': '0', 'deathmatch': '1', 'decalfrequency': '10', 'metamod_version': '1.10.7-devV',
  'mp_allowNPCs': '1', 'mp_autocrosshair': '1', 'mp_autoteambalance': '0', 'mp_disable_respawn_times': '0',
