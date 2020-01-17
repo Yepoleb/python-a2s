@@ -151,7 +151,7 @@ class GoldSrcInfo(metaclass=DataclsMeta):
     vac_enabled: bool
 
     """Number of bots on the server"""
-    bots_count: int
+    bot_count: int
 
     # Optional:
     """URL to the mod website"""
@@ -233,8 +233,8 @@ def parse_goldsrc(reader):
         resp.mod_website = reader.read_cstring()
         resp.mod_download = reader.read_cstring()
         reader.read(1) # Skip a NULL byte
-        resp.mod_version = reader.read_uint()
-        resp.mod_size = reader.read_uint()
+        resp.mod_version = reader.read_uint32()
+        resp.mod_size = reader.read_uint32()
         resp.multiplayer_only = reader.read_bool()
         resp.uses_custom_dll = reader.read_bool()
 

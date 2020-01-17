@@ -68,7 +68,7 @@ game_id=440, ping=0.253798684978392)
 
 ## Tested Games
 
-Half-Life 2, Half-Life, Team Fortress 2, Counter-Strike: Global Offensive, ARK: Survival Evolved, Rust
+Half-Life 2, Half-Life, Team Fortress 2, Counter-Strike: Global Offensive, Counter-Strike 1.6, ARK: Survival Evolved, Rust
 
 ## License
 
