@@ -3,9 +3,11 @@
 Library to query Source and GoldSource servers. Rewrite of the
 [python-valve](https://github.com/serverstf/python-valve) module.
 
+Official demo application: [Sourcequery](https://sourcequery.yepoleb.at)
+
 ## Requirements
 
-Python >=3.5, no external dependencies
+Python >=3.6, no external dependencies
 
 ## Install
 
