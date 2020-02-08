@@ -7,7 +7,7 @@ with open("README.md", "r") as readme:
 
 setuptools.setup(
     name="python-a2s",
-    version="1.1.1",
+    version="1.1.2",
     author="Gabriel Huber",
     author_email="mail@gabrielhuber.at",
     description="Query Source and GoldSource servers for name, map, players and more.",
@@ -23,5 +23,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Games/Entertainment"
     ],
-    python_requires=">=3.5"
+    python_requires=">=3.6"
 )

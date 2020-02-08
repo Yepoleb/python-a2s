@@ -229,7 +229,8 @@ def parse_goldsrc(reader):
     resp.password_protected = reader.read_bool()
     resp.is_mod = reader.read_bool()
 
-    if resp.is_mod:
+    # Some games don't send this section
+    if resp.is_mod and len(reader.peek()) > 2:
         resp.mod_website = reader.read_cstring()
         resp.mod_download = reader.read_cstring()
         reader.read(1) # Skip a NULL byte
