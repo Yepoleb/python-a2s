@@ -1,7 +1,7 @@
 import time
 import io
 
-from a2s.exceptions import BrokenMessageError
+from a2s.exceptions import BrokenMessageError, BufferExhaustedError
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
 from a2s.a2sstream import request
 from a2s.byteio import ByteReader
