@@ -62,7 +62,7 @@ class SourceInfo(metaclass=DataclsMeta):
     # Optional:
     """Extra data field, used to indicate if extra values are
     included in the response"""
-    edf: int
+    edf: int = 0
 
     """Port of the game server."""
     port: int
