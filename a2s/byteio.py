@@ -65,7 +65,7 @@ class ByteReader():
         return self.unpack_one("d")
 
     def read_bool(self):
-        return bool(self.unpack("b"))
+        return bool(self.unpack_one("b"))
 
     def read_char(self):
         char = self.unpack_one("c")
