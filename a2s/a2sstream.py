@@ -1,6 +1,7 @@
 import socket
 import bz2
 import io
+import logging
 
 from a2s.exceptions import BrokenMessageError
 from a2s.byteio import ByteReader
@@ -9,6 +10,8 @@ from a2s.byteio import ByteReader
 
 HEADER_SIMPLE = b"\xFF\xFF\xFF\xFF"
 HEADER_MULTI = b"\xFE\xFF\xFF\xFF"
+
+logger = logging.getLogger("a2s")
 
 class A2SFragment:
     def __init__(self, message_id, fragment_count, fragment_id, mtu,
@@ -61,6 +64,7 @@ class A2SStream:
         header = packet[:4]
         data = packet[4:]
         if header == HEADER_SIMPLE:
+            logger.debug("Received single packet: %r", data)
             return data
         elif header == HEADER_MULTI:
             fragments = [decode_fragment(data)]
@@ -68,7 +72,10 @@ class A2SStream:
                 packet = self._socket.recv(4096)
                 fragments.append(decode_fragment(packet[4:]))
             fragments.sort(key=lambda f: f.fragment_id)
-            return b"".join(fragment.payload for fragment in fragments)
+            reassembled = b"".join(fragment.payload for fragment in fragments)
+            logger.debug("Received %s part packet with content: %r",
+                         len(fragments), reassembled)
+            return reassembled
         else:
             raise BrokenMessageError(
                 "Invalid packet header: " + repr(header))
