@@ -58,14 +58,14 @@ def rules_request(conn, encoding, challenge=0, retries=0):
 
     return reader
 
-async def rules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+async def arules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
     conn = await A2SStreamAsync.create(address, timeout)
     reader = await rules_request_async(conn, encoding)
     conn.close()
     return rules_response(reader)
 
 async def rules_request_async(conn, encoding, challenge=0, retries=0):
-    resp_data = conn.request(b"\x56" + challenge.to_bytes(4, "little"))
+    resp_data = await conn.request(b"\x56" + challenge.to_bytes(4, "little"))
     reader = ByteReader(
         io.BytesIO(resp_data), endian="<", encoding=encoding)
 
@@ -78,7 +78,7 @@ async def rules_request_async(conn, encoding, challenge=0, retries=0):
             raise BrokenMessageError(
                 "Server keeps sending challenge responses")
         challenge = reader.read_uint32()
-        return await rules_request(
+        return await rules_request_async(
             conn, encoding, challenge, retries + 1)
 
     if response_type != A2S_RULES_RESPONSE:

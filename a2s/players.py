@@ -58,7 +58,7 @@ def players_request(conn, encoding, challenge=0, retries=0):
             raise BrokenMessageError(
                 "Server keeps sending challenge responses")
         challenge = reader.read_uint32()
-        return players_impl(
+        return players_request(
             conn, encoding, challenge, retries + 1)
 
     if response_type != A2S_PLAYER_RESPONSE:
@@ -67,8 +67,8 @@ def players_request(conn, encoding, challenge=0, retries=0):
 
     return reader
 
-async def players_async(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
-    conn = await A2SStream.create(address, timeout)
+async def aplayers(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+    conn = await A2SStreamAsync.create(address, timeout)
     reader = await players_request_async(conn, encoding)
     conn.close()
     return players_response(reader)
@@ -84,7 +84,7 @@ async def players_request_async(conn, encoding, challenge=0, retries=0):
             raise BrokenMessageError(
                 "Server keeps sending challenge responses")
         challenge = reader.read_uint32()
-        return await players_impl(
+        return await players_request_async(
             conn, encoding, challenge, retries + 1)
 
     if response_type != A2S_PLAYER_RESPONSE:

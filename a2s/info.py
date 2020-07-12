@@ -245,7 +245,7 @@ def parse_goldsrc(reader):
 
     return resp
 
-def info_response(resp_data):
+def info_response(resp_data, ping, encoding):
     reader = ByteReader(
         io.BytesIO(resp_data), endian="<", encoding=encoding)
 
@@ -258,7 +258,7 @@ def info_response(resp_data):
         raise BrokenMessageError(
             "Invalid response type: " + str(response_type))
 
-    resp.ping = recv_time - send_time
+    resp.ping = ping
     return resp
 
 def info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
@@ -267,14 +267,16 @@ def info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
     resp_data = conn.request(b"\x54Source Engine Query\0")
     recv_time = time.monotonic()
     conn.close()
+    ping = recv_time - send_time
 
-    return info_response(resp_data)
+    return info_response(resp_data, ping, encoding)
 
-async def info_async(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+async def ainfo(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
     conn = await A2SStreamAsync.create(address, timeout)
     send_time = time.monotonic()
     resp_data = await conn.request(b"\x54Source Engine Query\0")
     recv_time = time.monotonic()
     conn.close()
+    ping = recv_time - send_time
 
-    return info_response(resp_data)
+    return info_response(resp_data, ping, encoding)

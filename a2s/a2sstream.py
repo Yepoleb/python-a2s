@@ -45,7 +45,7 @@ class A2SStream:
             raise BrokenMessageError(
                 "Invalid packet header: " + repr(header))
 
-    def request(payload):
+    def request(self, payload):
         self.send(payload)
         return self.recv()
 
