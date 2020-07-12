@@ -11,7 +11,7 @@ HEADER_MULTI = b"\xFE\xFF\xFF\xFF"
 
 logger = logging.getLogger("a2s")
 
-class A2SProtocol:
+class A2SProtocol(asyncio.DatagramProtocol):
     def __init__(self):
         self.recv_queue = asyncio.Queue()
         self.error_event = asyncio.Event()
@@ -47,23 +47,48 @@ class A2SProtocol:
         self.error = exc
         self.error_event.set()
 
+    def raise_on_error():
+        error = self.error
+        self.error = None
+        self.error_event.clear()
+        raise error
+
+class A2SStreamAsync:
+    def __init__(self, transport, protocol, timeout):
+        self.transport = transport
+        self.protocol = protocol
+        self.timeout = timeout
+
+    def __del__(self):
+        self.close()
+
+    @classmethod
+    async def create(cls, address, timeout):
+        transport, protocol = await asyncio.create_datagram_endpoint(
+            lambda: A2SProtocol(), remote_addr=address)
+        return cls(transport, protocol, timeout)
+
     def send(self, payload):
         packet = HEADER_SIMPLE + payload
         self.transport.sendto(packet)
 
-    async def recv(self, timeout):
-        queue_task = asyncio.create_task(self.recv_queue.get())
-        error_task = asyncio.create_task(self.error_event.wait())
+    async def recv(self):
+        queue_task = asyncio.create_task(self.protocol.recv_queue.get())
+        error_task = asyncio.create_task(self.protocol.error_event.wait())
         done, pending = await asyncio.wait({queue_task, error_task},
-                     timeout=timeout, return_when=FIRST_COMPLETED)
+                     timeout=self.timeout, return_when=FIRST_COMPLETED)
 
         for task in pending: task.cancel()
         if error_task in done:
-            error = self.error
-            self.error = None
-            self.error_event.clear()
-            raise error
+           self.protocol.raise_on_error()
         if not done:
             raise asyncio.TimeoutError()
 
         return queue_task.result()
+
+    async def request(payload):
+        self.send(payload)
+        return await self.recv()
+
+    def close(self):
+        self.transport.close()
