@@ -4,7 +4,8 @@ from typing import List
 from a2s.exceptions import BrokenMessageError
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING, \
     DEFAULT_RETRIES
-from a2s.a2sstream import request
+from a2s.a2sstream import A2SStream
+from a2s.a2sasync import A2SStreamAsync
 from a2s.byteio import ByteReader
 from a2s.datacls import DataclsMeta
 
@@ -26,29 +27,7 @@ class Player(metaclass=DataclsMeta):
     """Time the player has been connected to the server"""
     duration: float
 
-def players(address, timeout=DEFAULT_TIMEOUT,
-            encoding=DEFAULT_ENCODING):
-    return players_impl(address, timeout, encoding)
-
-def players_impl(address, timeout, encoding, challenge=0, retries=0):
-    resp_data = request(
-        address, b"\x55" + challenge.to_bytes(4, "little"), timeout)
-    reader = ByteReader(
-        io.BytesIO(resp_data), endian="<", encoding=encoding)
-
-    response_type = reader.read_uint8()
-    if response_type == A2S_CHALLENGE_RESPONSE:
-        if retries >= DEFAULT_RETRIES:
-            raise BrokenMessageError(
-                "Server keeps sending challenge responses")
-        challenge = reader.read_uint32()
-        return players_impl(
-            address, timeout, encoding, challenge, retries + 1)
-
-    if response_type != A2S_PLAYER_RESPONSE:
-        raise BrokenMessageError(
-            "Invalid response type: " + str(response_type))
-
+def players_response(reader):
     player_count = reader.read_uint8()
     resp = [
         Player(
@@ -61,3 +40,55 @@ def players_impl(address, timeout, encoding, challenge=0, retries=0):
     ]
 
     return resp
+
+def players(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+    conn = A2SStream(address, timeout)
+    reader = players_request(conn, encoding)
+    conn.close()
+    return players_response(reader)
+
+def players_request(conn, encoding, challenge=0, retries=0):
+    resp_data = conn.request(b"\x55" + challenge.to_bytes(4, "little"))
+    reader = ByteReader(
+        io.BytesIO(resp_data), endian="<", encoding=encoding)
+
+    response_type = reader.read_uint8()
+    if response_type == A2S_CHALLENGE_RESPONSE:
+        if retries >= DEFAULT_RETRIES:
+            raise BrokenMessageError(
+                "Server keeps sending challenge responses")
+        challenge = reader.read_uint32()
+        return players_request(
+            conn, encoding, challenge, retries + 1)
+
+    if response_type != A2S_PLAYER_RESPONSE:
+        raise BrokenMessageError(
+            "Invalid response type: " + str(response_type))
+
+    return reader
+
+async def aplayers(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+    conn = await A2SStreamAsync.create(address, timeout)
+    reader = await players_request_async(conn, encoding)
+    conn.close()
+    return players_response(reader)
+
+async def players_request_async(conn, encoding, challenge=0, retries=0):
+    resp_data = await conn.request(b"\x55" + challenge.to_bytes(4, "little"))
+    reader = ByteReader(
+        io.BytesIO(resp_data), endian="<", encoding=encoding)
+
+    response_type = reader.read_uint8()
+    if response_type == A2S_CHALLENGE_RESPONSE:
+        if retries >= DEFAULT_RETRIES:
+            raise BrokenMessageError(
+                "Server keeps sending challenge responses")
+        challenge = reader.read_uint32()
+        return await players_request_async(
+            conn, encoding, challenge, retries + 1)
+
+    if response_type != A2S_PLAYER_RESPONSE:
+        raise BrokenMessageError(
+            "Invalid response type: " + str(response_type))
+
+    return reader

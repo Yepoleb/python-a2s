@@ -7,7 +7,7 @@ Official demo application: [Sourcequery](https://sourcequery.yepoleb.at)
 
 ## Requirements
 
-Python >=3.6, no external dependencies
+Python >=3.7, no external dependencies
 
 ## Install
 
@@ -20,6 +20,9 @@ Python >=3.6, no external dependencies
 * `a2s.info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING)`
 * `a2s.players(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING)`
 * `a2s.rules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING)`
+
+All functions also have an async version as of package 1.2.0 that adds an `a` prefix, e.g.
+`ainfo`, `aplayers`, `arules`.
 
 ### Parameters
 
