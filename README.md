@@ -37,7 +37,7 @@ All functions also have an async version as of package 1.2.0 that adds an `a` pr
 * info: SourceInfo or GoldSrcInfo. They are documented in the
   [source file](a2s/info.py).
 * players: List of Player items. Also documented in the corresponding
-  [source file](a2s/players.py)
+  [source file](a2s/players.py).
 * rules: Dictionary of key - value pairs.
 
 ### Exceptions
