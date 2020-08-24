@@ -2,6 +2,7 @@
 
 Library to query Source and GoldSource servers. Rewrite of the
 [python-valve](https://github.com/serverstf/python-valve) module.
+Supports both synchronous and asyncronous applications.
 
 Official demo application: [Sourcequery](https://sourcequery.yepoleb.at)
 
@@ -55,7 +56,7 @@ Example output shown may be shortened.
 >>> a2s.info(address)
 SourceInfo(protocol=17, server_name=" 24/7 Dustbowl :: Nemu's Stomping Ground", map_name='cp_dustbowl',
 folder='tf', game='Team Fortress', app_id=440, player_count=31, max_players=33, bot_count=21,
-server_type='d', platform='l', password_protected=True, vac_enabled=True, version='5579073',
+server_type='d', platform='l', password_protected=False, vac_enabled=True, version='5579073',
 edf=177, port=27015, steam_id=85568392920040090, stv_port=None, stv_name=None,
 keywords='brutus,celt,couch,cp,dustbowl,increased_maxplayers,nemu,nocrits,nodmgspread,pony,replays,vanilla',
 game_id=440, ping=0.253798684978392)
@@ -70,6 +71,14 @@ game_id=440, ping=0.253798684978392)
  'mp_allowNPCs': '1', 'mp_autocrosshair': '1', 'mp_autoteambalance': '0', 'mp_disable_respawn_times': '0',
  'mp_fadetoblack': '0'}
 ```
+
+## Notes
+
+* Some servers return inconsistent or garbage data. Filtering this out is left to the specific application, because there is no general approach to filtering that makes sense for all use cases. In most scenarios, it makes sense to at least remove players with empty names. Also the `player_count` value in the info query and the actual number of players returned in the player query do not always match up.
+
+* For some games, the query port is different from the actual connection port. The Steam server browser will show the connection port and querying that will not return an answer. There does not seem to be a general solution to this problem so far, but usually probing port numbers up to 10 higher and lower than the connection port usually leads to a response. If you're still not successful, use a network sniffer like Wireshark to monitor outgoing packets while refreshing the server popup in Steam.
+
+* Player counts above 255 do not work and there's no way to make them work. This is a limitation in the specification of the protocol.
 
 ## Tested Games
 
