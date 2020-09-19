@@ -1,6 +1,6 @@
 # Python A2S
 
-Library to query Source and GoldSource servers. Rewrite of the
+Library to query Source and GoldSource servers. Impliments [Valve's Server Query Protocol](https://developer.valvesoftware.com/wiki/Server_queries) Rewrite of the
 [python-valve](https://github.com/serverstf/python-valve) module.
 Supports both synchronous and asyncronous applications.
 
@@ -45,6 +45,9 @@ All functions also have an async version as of package 1.2.0 that adds an `a` pr
 * `a2s.BufferExhaustedError(BrokenMessageError)` - Response too short
 * `socket.timeout` - No response
 * `socket.gaierror` - Address resolution error
+* `concurrent.futures._base.TimeoutError`- No response async version
+* `socket.gaierror: [Errno 11001] getaddrinfo failed` - Address resolution error async version
+* `ConnectionRefusedError: [Errno 111] Connection refused` - Port is [closed](https://stackoverflow.com/questions/11585377/python-socket-error-errno-111-connection-refused) on destination machine. 
 
 ## Examples
 
@@ -70,6 +73,9 @@ game_id=440, ping=0.253798684978392)
 {'coop': '0', 'deathmatch': '1', 'decalfrequency': '10', 'metamod_version': '1.10.7-devV',
  'mp_allowNPCs': '1', 'mp_autocrosshair': '1', 'mp_autoteambalance': '0', 'mp_disable_respawn_times': '0',
  'mp_fadetoblack': '0'}
+>>> import asyncio
+>>> asyncio.get_event_loop().run_until_complete(a2s.ainfo(address))
+SourceInfo(protocol=17, server_name=" 24/7 Dustbowl :: Nemu's Stomping Ground", map_name='cp_dustbowl', folder='tf', game='Team Fortress', app_id=440, player_count=31, max_players=33, bot_count=24, server_type='d', platform='l', password_protected=False, vac_enabled=True, version='6064914', edf=177, port=27015, steam_id=85568392920040090, stv_port=None, stv_name=None, keywords='brutus,celt,couch,cp,dustbowl,increased_maxplayers,nemu,nocrits,nodmgspread,pony,replays,vanilla', game_id=440, ping=0.1720000000204891)
 ```
 
 ## Notes
