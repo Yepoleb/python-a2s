@@ -47,7 +47,7 @@ class A2SProtocol(asyncio.DatagramProtocol):
         self.error = exc
         self.error_event.set()
 
-    def raise_on_error():
+    def raise_on_error(self):
         error = self.error
         self.error = None
         self.error_event.clear()
