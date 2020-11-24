@@ -8,6 +8,7 @@ from a2s.a2sfragment import decode_fragment
 
 HEADER_SIMPLE = b"\xFF\xFF\xFF\xFF"
 HEADER_MULTI = b"\xFE\xFF\xFF\xFF"
+MIN_PACKET_SIZE = 1200
 
 logger = logging.getLogger("a2s")
 
@@ -71,6 +72,9 @@ class A2SStreamAsync:
 
     def send(self, payload):
         packet = HEADER_SIMPLE + payload
+        padding_count = MIN_PACKET_SIZE - len(packet)
+        if padding_count > 0:
+            packet += b"\x00" * padding_count
         self.transport.sendto(packet)
 
     async def recv(self):

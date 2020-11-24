@@ -5,6 +5,10 @@ Impliments [Valve's Server Query Protocol](https://developer.valvesoftware.com/w
 Rewrite of the [python-valve](https://github.com/serverstf/python-valve) module.
 Supports both synchronous and asyncronous applications.
 
+**This branch implements the 1200 Bytes padding proposed by Valve in
+[a recent forum thread](https://steamcommunity.com/discussions/forum/14/2989789048633291344/).
+Only use this for testing as not all servers are compatible yet!**
+
 Official demo application: [Sourcequery](https://sourcequery.yepoleb.at)
 
 ## Requirements
