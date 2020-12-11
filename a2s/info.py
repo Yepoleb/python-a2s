@@ -1,10 +1,9 @@
-import time
 import io
 
 from a2s.exceptions import BrokenMessageError, BufferExhaustedError
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
-from a2s.a2sstream import A2SStream
-from a2s.a2sasync import A2SStreamAsync
+from a2s.a2s_sync import request_sync
+from a2s.a2s_async import request_async
 from a2s.byteio import ByteReader
 from a2s.datacls import DataclsMeta
 
@@ -12,6 +11,7 @@ from a2s.datacls import DataclsMeta
 
 A2S_INFO_RESPONSE = 0x49
 A2S_INFO_RESPONSE_LEGACY = 0x6D
+
 
 class SourceInfo(metaclass=DataclsMeta):
     """Protocol version used by the server"""
@@ -177,6 +177,38 @@ class GoldSrcInfo(metaclass=DataclsMeta):
     """Round-trip delay time for the request in seconds"""
     ping: float
 
+
+def info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+    return request_sync(address, timeout, encoding, InfoProtocol)
+
+async def ainfo(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+    return await request_async(address, timeout, encoding, InfoProtocol)
+
+
+class InfoProtocol:
+    @staticmethod
+    def validate_response_type(response_type):
+        return response_type in (A2S_INFO_RESPONSE, A2S_INFO_RESPONSE_LEGACY)
+
+    @staticmethod
+    def serialize_request(challenge):
+        if challenge:
+            return b"\x54Source Engine Query\0" + challenge.to_bytes(4, "little")
+        else:
+            return b"\x54Source Engine Query\0"
+
+    @staticmethod
+    def deserialize_response(reader, response_type, ping):
+        if response_type == A2S_INFO_RESPONSE:
+            resp = parse_source(reader)
+        elif response_type == A2S_INFO_RESPONSE_LEGACY:
+            resp = parse_goldsrc(reader)
+        else:
+            raise Exception(str(response_type))
+
+        resp.ping = ping
+        return resp
+
 def parse_source(reader):
     resp = SourceInfo()
     resp.protocol = reader.read_uint8()
@@ -244,39 +276,3 @@ def parse_goldsrc(reader):
     resp.bot_count = reader.read_uint8()
 
     return resp
-
-def info_response(resp_data, ping, encoding):
-    reader = ByteReader(
-        io.BytesIO(resp_data), endian="<", encoding=encoding)
-
-    response_type = reader.read_uint8()
-    if response_type == A2S_INFO_RESPONSE:
-        resp = parse_source(reader)
-    elif response_type == A2S_INFO_RESPONSE_LEGACY:
-        resp = parse_goldsrc(reader)
-    else:
-        raise BrokenMessageError(
-            "Invalid response type: " + str(response_type))
-
-    resp.ping = ping
-    return resp
-
-def info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
-    conn = A2SStream(address, timeout)
-    send_time = time.monotonic()
-    resp_data = conn.request(b"\x54Source Engine Query\0")
-    recv_time = time.monotonic()
-    conn.close()
-    ping = recv_time - send_time
-
-    return info_response(resp_data, ping, encoding)
-
-async def ainfo(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
-    conn = await A2SStreamAsync.create(address, timeout)
-    send_time = time.monotonic()
-    resp_data = await conn.request(b"\x54Source Engine Query\0")
-    recv_time = time.monotonic()
-    conn.close()
-    ping = recv_time - send_time
-
-    return info_response(resp_data, ping, encoding)
