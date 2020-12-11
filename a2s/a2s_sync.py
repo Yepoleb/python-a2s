@@ -60,6 +60,7 @@ class A2SStream:
         self.close()
 
     def send(self, data):
+        logger.debug("Sending packet: %r", data)
         packet = HEADER_SIMPLE + data
         self._socket.sendto(packet, self.address)
 

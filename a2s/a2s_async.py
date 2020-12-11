@@ -112,6 +112,7 @@ class A2SStreamAsync:
         return cls(transport, protocol, timeout)
 
     def send(self, payload):
+        logger.debug("Sending packet: %r", payload)
         packet = HEADER_SIMPLE + payload
         self.transport.sendto(packet)
 
