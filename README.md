@@ -83,6 +83,8 @@ game_id=440, ping=0.253798684978392)
 
 * Player counts above 255 do not work and there's no way to make them work. This is a limitation in the specification of the protocol.
 
+* This library does not implement rate limiting. It's up to the application to limit the number of requests per second to an acceptable amount to not trigger any firewall rules.
+
 ## Tested Games
 
 Half-Life 2, Half-Life, Team Fortress 2, Counter-Strike: Global Offensive, Counter-Strike 1.6, ARK: Survival Evolved, Rust
