@@ -81,7 +81,7 @@ game_id=440, ping=0.253798684978392)
 
 * For some games, the query port is different from the actual connection port. The Steam server browser will show the connection port and querying that will not return an answer. There does not seem to be a general solution to this problem so far, but usually probing port numbers up to 10 higher and lower than the connection port usually leads to a response. If you're still not successful, use a network sniffer like Wireshark to monitor outgoing packets while refreshing the server popup in Steam.
 * But you can use `http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr={IP}` to fetch query port from steam servers. Example response for `5.101.166.210` :
-```
+```json
 {
   "response": {
     "success": true,
