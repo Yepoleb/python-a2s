@@ -80,7 +80,38 @@ game_id=440, ping=0.253798684978392)
 * Some servers return inconsistent or garbage data. Filtering this out is left to the specific application, because there is no general approach to filtering that makes sense for all use cases. In most scenarios, it makes sense to at least remove players with empty names. Also the `player_count` value in the info query and the actual number of players returned in the player query do not always match up.
 
 * For some games, the query port is different from the actual connection port. The Steam server browser will show the connection port and querying that will not return an answer. There does not seem to be a general solution to this problem so far, but usually probing port numbers up to 10 higher and lower than the connection port usually leads to a response. If you're still not successful, use a network sniffer like Wireshark to monitor outgoing packets while refreshing the server popup in Steam.
-
+* But you can use `http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr={IP}` to fetch query port from steam servers. Example response for `5.101.166.210` :
+```
+{
+  "response": {
+    "success": true,
+    "servers": [
+      {
+        "addr": "5.101.166.210:27015",
+        "gmsindex": -1,
+        "appid": 346110,
+        "gamedir": "ark_survival_evolved",
+        "region": -1,
+        "secure": true,
+        "lan": false,
+        "gameport": 7777,
+        "specport": 0
+      },
+      {
+        "addr": "5.101.166.210:27017",
+        "gmsindex": -1,
+        "appid": 346110,
+        "gamedir": "ark_survival_evolved",
+        "region": -1,
+        "secure": true,
+        "lan": false,
+        "gameport": 7779,
+        "specport": 0
+      }
+    ]
+  }
+}
+```
 * Player counts above 255 do not work and there's no way to make them work. This is a limitation in the specification of the protocol.
 
 * This library does not implement rate limiting. It's up to the application to limit the number of requests per second to an acceptable amount to not trigger any firewall rules.
