@@ -1,7 +1,7 @@
 # Python A2S
 
 Library to query Source and GoldSource servers.
-Impliments [Valve's Server Query Protocol](https://developer.valvesoftware.com/wiki/Server_queries).
+Implements [Valve's Server Query Protocol](https://developer.valvesoftware.com/wiki/Server_queries).
 Rewrite of the [python-valve](https://github.com/serverstf/python-valve) module.
 Supports both synchronous and asyncronous applications.
 
@@ -48,6 +48,7 @@ All functions also have an async version as of package 1.2.0 that adds an `a` pr
 * `asyncio.exceptions.TimeoutError` - No response (async calls)
 * `socket.gaierror` - Address resolution error
 * `ConnectionRefusedError` - Target port closed
+* `OSError` - Various networking errors like routing failure
 
 ## Examples
 
