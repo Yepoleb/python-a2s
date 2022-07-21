@@ -52,28 +52,17 @@ All functions also have an async version as of package 1.2.0 that adds an `a` pr
 
 ## Examples
 
-Example output shown may be shortened.
+Example output shown may be shortened. Also the server shown in the example may be down by the time you see this.
 
 ```py
 >>> import a2s
->>> address = ("stomping.kinofnemu.net", 27015)
+>>> address = ('46.251.238.245', 27037)
 >>> a2s.info(address)
-SourceInfo(protocol=17, server_name=" 24/7 Dustbowl :: Nemu's Stomping Ground", map_name='cp_dustbowl',
-folder='tf', game='Team Fortress', app_id=440, player_count=31, max_players=33, bot_count=21,
-server_type='d', platform='l', password_protected=False, vac_enabled=True, version='5579073',
-edf=177, port=27015, steam_id=85568392920040090, stv_port=None, stv_name=None,
-keywords='brutus,celt,couch,cp,dustbowl,increased_maxplayers,nemu,nocrits,nodmgspread,pony,replays,vanilla',
-game_id=440, ping=0.253798684978392)
-
+SourceInfo(protocol=17, server_name='PVP-Official-Fjordur-ARKpocalypse12 - (v348.2)', map_name='Fjordur', folder='ark_survival_evolved', game='ARK: Survival Evolved', app_id=0, player_count=70, max_players=70, bot_count=0, server_type='d', platform='w', password_protected=False, vac_enabled=True, version='1.0.0.0', edf=177, port=7799, steam_id=90161518848227331, stv_port=None, stv_name=None, keywords=',OWNINGID:90161518848227331,OWNINGNAME:90161518848227331,NUMOPENPUBCONN:8,P2PADDR:90161518848227331,P2PPORT:7799,LEGACY_i:0', game_id=346110, ping=0.25)
 >>> a2s.players(address)
-[Player(index=0, name='Brutus', score=34, duration=836.4749145507812),
- Player(index=0, name='RageQuit', score=6, duration=1080.8099365234375),
- Player(index=0, name="Screamin' Eagles", score=1, duration=439.8598327636719)]
-
+[Player(index=0, name='GammaBreinek', score=0, duration=28108.4375), Player(index=0, name='123', score=0, duration=28099.265625), Player(index=0, name='', score=0, duration=26686.79296875), Player(index=0, name='reckper', score=0, duration=26636.46484375), Player(index=0, name='', score=0, duration=26489.970703125), ... , Player(index=0, name='Babidjon', score=0, duration=86.51565551757812)]
 >>> a2s.rules(address)
-{'coop': '0', 'deathmatch': '1', 'decalfrequency': '10', 'metamod_version': '1.10.7-devV',
- 'mp_allowNPCs': '1', 'mp_autocrosshair': '1', 'mp_autoteambalance': '0', 'mp_disable_respawn_times': '0',
- 'mp_fadetoblack': '0'}
+{'ALLOWDOWNLOADCHARS_i': '1', 'ALLOWDOWNLOADITEMS_i': '1', 'ClusterId_s': 'PCArkpocalypse', 'CUSTOMSERVERNAME_s': 'pvp-official-fjordur-arkpocalypse12', 'DayTime_s': '140', 'GameMode_s': 'TestGameMode_C', 'HASACTIVEMODS_i': '0', 'LEGACY_i': '0', 'MATCHTIMEOUT_f': '120.000000', 'ModId_l': '0', 'Networking_i': '0', 'NUMOPENPUBCONN': '8', 'OFFICIALSERVER_i': '1', 'OWNINGID': '90161518848227331', 'OWNINGNAME': '90161518848227331', 'P2PADDR': '90161518848227331', 'P2PPORT': '7799', 'SEARCHKEYWORDS_s': 'Custom', 'ServerPassword_b': 'false', 'SERVERUSESBATTLEYE_b': 'true', 'SESSIONFLAGS': '1707', 'SESSIONISPVE_i': '0'}
 ```
 
 ## Notes
