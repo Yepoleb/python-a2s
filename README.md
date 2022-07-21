@@ -56,29 +56,29 @@ Example output shown may be shortened. Also the server shown in the example may 
 
 ```py
 >>> import a2s
->>> address = ("stomping.kinofnemu.net", 27015)
+>>> address = ("chi-1.us.uncletopia.com", 27015)
 >>> a2s.info(address)
-SourceInfo(protocol=17, server_name=" 24/7 Dustbowl :: Nemu's Stomping Ground", map_name='cp_dustbowl',
-folder='tf', game='Team Fortress', app_id=440, player_count=31, max_players=33, bot_count=21,
-server_type='d', platform='l', password_protected=False, vac_enabled=True, version='5579073',
-edf=177, port=27015, steam_id=85568392920040090, stv_port=None, stv_name=None,
-keywords='brutus,celt,couch,cp,dustbowl,increased_maxplayers,nemu,nocrits,nodmgspread,pony,replays,vanilla',
-game_id=440, ping=0.253798684978392)
+SourceInfo(protocol=17, server_name='Uncletopia | Chicago | 1', map_name='pl_badwater',
+folder='tf', game='Team Fortress', app_id=440, player_count=24, max_players=24, bot_count=0,
+server_type='d', platform='l', password_protected=False, vac_enabled=True, version='7370160',
+edf=241, port=27015, steam_id=85568392924469984, stv_port=27016,
+stv_name='Uncletopia | Chicago | 1 | STV', keywords='nocrits,nodmgspread,payload,uncletopia',
+game_id=440, ping=0.2339219159912318)
 
 >>> a2s.players(address)
-[Player(index=0, name='Brutus', score=34, duration=836.4749145507812),
- Player(index=0, name='RageQuit', score=6, duration=1080.8099365234375),
- Player(index=0, name="Screamin' Eagles", score=1, duration=439.8598327636719)]
+[Player(index=0, name='AmNot', score=22, duration=8371.4072265625),
+Player(index=0, name='TAAAAANK!', score=15, duration=6251.03173828125),
+Player(index=0, name='Tiny Baby Man', score=17, duration=6229.0361328125)]
 
 >>> a2s.rules(address)
-{'coop': '0', 'deathmatch': '1', 'decalfrequency': '10', 'metamod_version': '1.10.7-devV',
- 'mp_allowNPCs': '1', 'mp_autocrosshair': '1', 'mp_autoteambalance': '0', 'mp_disable_respawn_times': '0',
- 'mp_fadetoblack': '0'}
+{'coop': '0', 'cronjobs_version': '2.0', 'crontab_version': '2.0', 'deathmatch': '1',
+'decalfrequency': '10', 'discord_accelerator_version': '1.0', 'discord_version': '1.0',
+'extendedmapconfig_version': '1.1.1', 'metamod_version': '1.11.0-dev+1145V', 'mp_allowNPCs': '1'}
 ```
 
 ## Notes
 
-* Some servers return inconsistent or garbage data. Filtering this out is left to the specific application, because there is no general approach to filtering that makes sense for all use cases. In most scenarios, it makes sense to at least remove players with empty names. Also the `player_count` value in the info query and the actual number of players returned in the player query do not always match up.
+* Some servers return inconsistent or garbage data. Filtering this out is left to the specific application, because there is no general approach to filtering that makes sense for all use cases. In most scenarios, it makes sense to at least remove players with empty names. Also the `player_count` value in the info query and the actual number of players returned in the player query do not always match up. Sometimes the player query returns an empty list of players.
 
 * For some games, the query port is different from the actual connection port. The Steam server browser will show the connection port and querying that will not return an answer. There does not seem to be a general solution to this problem so far, but usually probing port numbers up to 10 higher and lower than the connection port usually leads to a response. There's also the option of using `http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr={IP}` to get a list of game servers on an IP (thanks to Nereg for this suggestion). If you're still not successful, use a network sniffer like Wireshark to monitor outgoing packets while refreshing the server popup in Steam.
 
