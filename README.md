@@ -52,7 +52,7 @@ All functions also have an async version as of package 1.2.0 that adds an `a` pr
 
 ## Examples
 
-Example output shown may be shortened.
+Example output shown may be shortened. Also the server shown in the example may be down by the time you see this.
 
 ```py
 >>> import a2s
