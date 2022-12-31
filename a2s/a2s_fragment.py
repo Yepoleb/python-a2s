@@ -29,6 +29,16 @@ from a2s.byteio import ByteReader
 
 
 class A2SFragment:
+    __slots__ = (
+        "message_id",
+        "fragment_count",
+        "fragment_id",
+        "mtu",
+        "decompressed_size",
+        "crc",
+        "payload",
+    )
+
     def __init__(
         self,
         message_id: int,

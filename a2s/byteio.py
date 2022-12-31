@@ -32,7 +32,6 @@ from a2s.exceptions import BufferExhaustedError
 
 from .defaults import DEFAULT_ENCODING
 
-
 if TYPE_CHECKING:
     from typing_extensions import Literal
 
@@ -42,6 +41,12 @@ STRUCT_OPTIONS = Literal[
 
 
 class ByteReader:
+    __slots__ = (
+        "stream",
+        "endian",
+        "encoding",
+    )
+
     def __init__(self, stream: io.BytesIO, endian: str = "=", encoding: Optional[str] = None) -> None:
         self.stream: io.BytesIO = stream
         self.endian: str = endian
@@ -126,6 +131,12 @@ class ByteReader:
 
 
 class ByteWriter:
+    __slots__ = (
+        "stream",
+        "endian",
+        "encoding",
+    )
+
     def __init__(self, stream: io.BytesIO, endian: str = "=", encoding: Optional[str] = None) -> None:
         self.stream: io.BytesIO = stream
         self.endian: str = endian

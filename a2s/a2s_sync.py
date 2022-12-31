@@ -48,8 +48,6 @@ logger: logging.Logger = logging.getLogger("a2s")
 
 T = TypeVar("T", InfoProtocol, RulesProtocol, PlayersProtocol)
 
-__all__ = ("A2SStream",)
-
 
 @overload
 def request_sync(
@@ -139,6 +137,11 @@ def request_sync_impl(
 
 
 class A2SStream:
+    __slots__ = (
+        "address",
+        "_socket",
+    )
+
     def __init__(self, address: Tuple[str, int], timeout: float) -> None:
         self.address: Tuple[str, int] = address
         self._socket: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
