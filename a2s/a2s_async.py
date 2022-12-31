@@ -27,7 +27,7 @@ import asyncio
 import io
 import logging
 import time
-from typing import TYPE_CHECKING, Dict, List, NoReturn, Optional, Tuple, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Dict, List, NoReturn, Optional, Tuple, Type, TypeVar, Union, overload
 
 from a2s.a2s_fragment import A2SFragment, decode_fragment
 from a2s.byteio import ByteReader
@@ -48,7 +48,28 @@ PROTOCOLS = Union[InfoProtocol, PlayersProtocol, RulesProtocol]
 
 logger: logging.Logger = logging.getLogger("a2s")
 
-T = TypeVar("T", bound=PROTOCOLS)
+T = TypeVar("T", InfoProtocol, PlayersProtocol, RulesProtocol)
+
+
+@overload
+async def request_async(
+    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[InfoProtocol]
+) -> Union[SourceInfo, GoldSrcInfo]:
+    ...
+
+
+@overload
+async def request_async(
+    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[PlayersProtocol]
+) -> List[Player]:
+    ...
+
+
+@overload
+async def request_async(
+    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[RulesProtocol]
+) -> Dict[str, str]:
+    ...
 
 
 async def request_async(
@@ -58,6 +79,42 @@ async def request_async(
     response = await request_async_impl(conn, encoding, a2s_proto)
     conn.close()
     return response
+
+
+@overload
+async def request_async_impl(
+    conn: A2SStreamAsync,
+    encoding: str,
+    a2s_proto: Type[InfoProtocol],
+    challenge: int = ...,
+    retries: int = ...,
+    ping: Optional[float] = ...,
+) -> Union[SourceInfo, GoldSrcInfo]:
+    ...
+
+
+@overload
+async def request_async_impl(
+    conn: A2SStreamAsync,
+    encoding: str,
+    a2s_proto: Type[PlayersProtocol],
+    challenge: int = ...,
+    retries: int = ...,
+    ping: Optional[float] = ...,
+) -> List[Player]:
+    ...
+
+
+@overload
+async def request_async_impl(
+    conn: A2SStreamAsync,
+    encoding: str,
+    a2s_proto: Type[RulesProtocol],
+    challenge: int = ...,
+    retries: int = ...,
+    ping: Optional[float] = ...,
+) -> Dict[str, str]:
+    ...
 
 
 async def request_async_impl(

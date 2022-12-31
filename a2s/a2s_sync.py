@@ -28,7 +28,7 @@ import io
 import logging
 import socket
 import time
-from typing import Dict, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Dict, List, Optional, Tuple, Type, TypeVar, Union, overload
 
 from a2s.a2s_fragment import decode_fragment
 from a2s.byteio import ByteReader
@@ -48,14 +48,69 @@ logger: logging.Logger = logging.getLogger("a2s")
 
 T = TypeVar("T", InfoProtocol, RulesProtocol, PlayersProtocol)
 
+__all__ = ("A2SStream",)
+
+
+@overload
+def request_sync(
+    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[InfoProtocol]
+) -> Union[SourceInfo, GoldSrcInfo]:
+    ...
+
+
+@overload
+def request_sync(address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[PlayersProtocol]) -> List[Player]:
+    ...
+
+
+@overload
+def request_sync(address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[RulesProtocol]) -> Dict[str, str]:
+    ...
+
 
 def request_sync(
     address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[T]
 ) -> Union[List[Player], GoldSrcInfo, SourceInfo, Dict[str, str]]:
     conn = A2SStream(address, timeout)
-    response = request_sync_impl(conn, encoding, a2s_proto)  # type: ignore
+    response = request_sync_impl(conn, encoding, a2s_proto)
     conn.close()
     return response
+
+
+@overload
+def request_sync_impl(
+    conn: A2SStream,
+    encoding: str,
+    a2s_proto: Type[InfoProtocol],
+    challenge: int = ...,
+    retries: int = ...,
+    ping: Optional[float] = ...,
+) -> Union[SourceInfo, GoldSrcInfo]:
+    ...
+
+
+@overload
+def request_sync_impl(
+    conn: A2SStream,
+    encoding: str,
+    a2s_proto: Type[PlayersProtocol],
+    challenge: int = ...,
+    retries: int = ...,
+    ping: Optional[float] = ...,
+) -> List[Player]:
+    ...
+
+
+@overload
+def request_sync_impl(
+    conn: A2SStream,
+    encoding: str,
+    a2s_proto: Type[RulesProtocol],
+    challenge: int = ...,
+    retries: int = ...,
+    ping: Optional[float] = ...,
+) -> Dict[str, str]:
+    ...
 
 
 def request_sync_impl(
