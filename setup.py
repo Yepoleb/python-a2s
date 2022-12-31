@@ -15,6 +15,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Yepoleb/python-a2s",
     packages=["a2s"],
+    package_data={"a2s": ["a2s/py.typed", "*.pyi", "**/*.pyi"]},
     license="MIT License",
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -22,6 +23,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
         "Topic :: Games/Entertainment",
+        "Typing :: Typed",
     ],
     python_requires=">=3.7",
 )

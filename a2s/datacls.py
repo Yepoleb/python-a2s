@@ -1,4 +1,28 @@
 """
+MIT License
+
+Copyright (c) 2020 Gabriel Huber
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----
+
 Cheap dataclasses module backport
 
 Check out the official documentation to see what this is trying to
@@ -7,13 +31,13 @@ https://docs.python.org/3/library/dataclasses.html
 """
 from __future__ import annotations
 
-from collections import OrderedDict
 import copy
-
-from typing import Any, Generator, Tuple, TYPE_CHECKING, Dict
+from collections import OrderedDict
+from typing import TYPE_CHECKING, Any, Dict, Generator, Tuple
 
 if TYPE_CHECKING:
     from typing_extensions import Self
+
 
 class DataclsBase:
     _defaults: "OrderedDict[str, Any]"
@@ -29,9 +53,8 @@ class DataclsBase:
             yield (name, getattr(self, name))
 
     def __repr__(self) -> str:
-        return "{}({})".format(
-            self.__class__.__name__,
-            ", ".join(name + "=" + repr(value) for name, value in self))
+        return "{}({})".format(self.__class__.__name__, ", ".join(name + "=" + repr(value) for name, value in self))
+
 
 class DataclsMeta(type):
     def __new__(cls, name: str, bases: Tuple[type, ...], prop: Dict[str, Any]) -> Self:

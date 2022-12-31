@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 from a2s.exceptions import BrokenMessageError as BrokenMessageError, BufferExhaustedError as BufferExhaustedError
-
-from a2s.info import info as info, ainfo as ainfo, SourceInfo as SourceInfo, GoldSrcInfo as GoldSrcInfo
-from a2s.players import players as players, aplayers as aplayers, Player as Player
-from a2s.rules import rules as rules, arules as arules
+from a2s.info import GoldSrcInfo as GoldSrcInfo, SourceInfo as SourceInfo, ainfo as ainfo, info as info
+from a2s.players import Player as Player, aplayers as aplayers, players as players
+from a2s.rules import arules as arules, rules as rules
