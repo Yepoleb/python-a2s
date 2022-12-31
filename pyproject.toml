@@ -13,6 +13,7 @@ include = ["a2s/**/*.py", "a2s/**/*.pyi"]
 useLibraryCodeForTypes = true
 typeCheckingMode = "strict"
 pythonVersion = "3.7"
+reportImportCycles = false
 
 [build-system]
 requires = ["setuptools", "wheel"]

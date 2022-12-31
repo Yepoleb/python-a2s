@@ -15,7 +15,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Yepoleb/python-a2s",
     packages=["a2s"],
-    package_data={"a2s": ["a2s/py.typed", "*.pyi", "**/*.pyi"]},
+    package_data={"a2s": ["a2s/py.typed"]},
     license="MIT License",
     classifiers=[
         "Development Status :: 4 - Beta",
