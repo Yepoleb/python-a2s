@@ -1,204 +1,214 @@
-import io
+from __future__ import annotations
 
-from a2s.exceptions import BrokenMessageError, BufferExhaustedError
-from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
-from a2s.a2s_sync import request_sync
+from typing import Optional, Tuple, Union
+
 from a2s.a2s_async import request_async
-from a2s.byteio import ByteReader
+from a2s.a2s_sync import request_sync
 from a2s.datacls import DataclsMeta
+from a2s.defaults import DEFAULT_ENCODING, DEFAULT_TIMEOUT
+from a2s.exceptions import BufferExhaustedError
 
-
+from .byteio import ByteReader
 
 A2S_INFO_RESPONSE = 0x49
 A2S_INFO_RESPONSE_LEGACY = 0x6D
 
 
 class SourceInfo(metaclass=DataclsMeta):
-    """Protocol version used by the server"""
+
     protocol: int
+    """Protocol version used by the server"""
 
-    """Display name of the server"""
     server_name: str
+    """Display name of the server"""
 
-    """The currently loaded map"""
     map_name: str
+    """The currently loaded map"""
 
-    """Name of the game directory"""
     folder: str
+    """Name of the game directory"""
 
-    """Name of the game"""
     game: str
+    """Name of the game"""
 
-    """App ID of the game required to connect"""
     app_id: int
+    """App ID of the game required to connect"""
 
-    """Number of players currently connected"""
     player_count: int
+    """Number of players currently connected"""
 
-    """Number of player slots available"""
     max_players: int
+    """Number of player slots available"""
 
-    """Number of bots on the server"""
     bot_count: int
+    """Number of bots on the server"""
 
+    server_type: str
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
-    server_type: str
 
+    platform: str
     """Operating system of the server
     'l', 'w', 'm' for Linux, Windows, macOS"""
-    platform: str
 
-    """Server requires a password to connect"""
     password_protected: bool
+    """Server requires a password to connect"""
 
-    """Server has VAC enabled"""
     vac_enabled: bool
+    """Server has VAC enabled"""
 
-    """Version of the server software"""
     version: str
+    """Version of the server software"""
 
     # Optional:
+    edf: int = 0
     """Extra data field, used to indicate if extra values are
     included in the response"""
-    edf: int = 0
 
-    """Port of the game server."""
     port: int
+    """Port of the game server."""
 
-    """Steam ID of the server"""
     steam_id: int
+    """Steam ID of the server"""
 
-    """Port of the SourceTV server"""
     stv_port: int
+    """Port of the SourceTV server"""
 
-    """Name of the SourceTV server"""
     stv_name: str
+    """Name of the SourceTV server"""
 
-    """Tags that describe the gamemode being played"""
     keywords: str
+    """Tags that describe the gamemode being played"""
 
-    """Game ID for games that have an app ID too high for 16bit."""
     game_id: int
+    """Game ID for games that have an app ID too high for 16bit."""
 
     # Client determined values:
-    """Round-trip delay time for the request in seconds"""
     ping: float
+    """Round-trip delay time for the request in seconds"""
 
     @property
-    def has_port(self):
+    def has_port(self) -> bool:
         return bool(self.edf & 0x80)
 
     @property
-    def has_steam_id(self):
+    def has_steam_id(self) -> bool:
         return bool(self.edf & 0x10)
 
     @property
-    def has_stv(self):
+    def has_stv(self) -> bool:
         return bool(self.edf & 0x40)
 
     @property
-    def has_keywords(self):
+    def has_keywords(self) -> bool:
         return bool(self.edf & 0x20)
 
     @property
-    def has_game_id(self):
+    def has_game_id(self) -> bool:
         return bool(self.edf & 0x01)
 
+
 class GoldSrcInfo(metaclass=DataclsMeta):
-    """IP Address and port of the server"""
     address: str
+    """IP Address and port of the server"""
 
-    """Display name of the server"""
     server_name: str
+    """Display name of the server"""
 
-    """The currently loaded map"""
     map_name: str
+    """The currently loaded map"""
 
-    """Name of the game directory"""
     folder: str
+    """Name of the game directory"""
 
-    """Name of the game"""
     game: str
+    """Name of the game"""
 
-    """Number of players currently connected"""
     player_count: int
+    """Number of players currently connected"""
 
-    """Number of player slots available"""
     max_players: int
+    """Number of player slots available"""
 
-    """Protocol version used by the server"""
     protocol: int
+    """Protocol version used by the server"""
 
+    server_type: str
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
-    server_type: str
 
+    platform: str
     """Operating system of the server
     'l', 'w' for Linux and Windows"""
-    platform: str
 
-    """Server requires a password to connect"""
     password_protected: bool
+    """Server requires a password to connect"""
 
     """Server is running a Half-Life mod instead of the base game"""
     is_mod: bool
 
-    """Server has VAC enabled"""
     vac_enabled: bool
+    """Server has VAC enabled"""
 
-    """Number of bots on the server"""
     bot_count: int
+    """Number of bots on the server"""
 
     # Optional:
-    """URL to the mod website"""
     mod_website: str
+    """URL to the mod website"""
 
-    """URL to download the mod"""
     mod_download: str
+    """URL to download the mod"""
 
-    """Version of the mod installed on the server"""
     mod_version: int
+    """Version of the mod installed on the server"""
 
-    """Size in bytes of the mod"""
     mod_size: int
+    """Size in bytes of the mod"""
 
-    """Mod supports multiplayer only"""
     multiplayer_only: bool = False
+    """Mod supports multiplayer only"""
 
+    uses_custom_dll: bool = True
     """Mod uses a custom DLL"""
-    uses_hl_dll: bool = True
 
     # Client determined values:
-    """Round-trip delay time for the request in seconds"""
     ping: float
+    """Round-trip delay time for the request in seconds"""
 
 
-def info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+def info(
+    address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING
+) -> Union[SourceInfo, GoldSrcInfo]:
     return request_sync(address, timeout, encoding, InfoProtocol)
 
-async def ainfo(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+
+async def ainfo(
+    address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING
+) -> Union[SourceInfo, GoldSrcInfo]:
     return await request_async(address, timeout, encoding, InfoProtocol)
 
 
 class InfoProtocol:
     @staticmethod
-    def validate_response_type(response_type):
+    def validate_response_type(response_type: int) -> bool:
         return response_type in (A2S_INFO_RESPONSE, A2S_INFO_RESPONSE_LEGACY)
 
     @staticmethod
-    def serialize_request(challenge):
+    def serialize_request(challenge: int) -> bytes:
         if challenge:
             return b"\x54Source Engine Query\0" + challenge.to_bytes(4, "little")
         else:
             return b"\x54Source Engine Query\0"
 
     @staticmethod
-    def deserialize_response(reader, response_type, ping):
+    def deserialize_response(
+        reader: ByteReader, response_type: int, ping: Optional[float]
+    ) -> Union[SourceInfo, GoldSrcInfo]:
         if response_type == A2S_INFO_RESPONSE:
             resp = parse_source(reader)
         elif response_type == A2S_INFO_RESPONSE_LEGACY:
@@ -206,10 +216,12 @@ class InfoProtocol:
         else:
             raise Exception(str(response_type))
 
+        assert ping
         resp.ping = ping
         return resp
 
-def parse_source(reader):
+
+def parse_source(reader: ByteReader) -> SourceInfo:
     resp = SourceInfo()
     resp.protocol = reader.read_uint8()
     resp.server_name = reader.read_cstring()
@@ -222,7 +234,7 @@ def parse_source(reader):
     resp.bot_count = reader.read_uint8()
     resp.server_type = reader.read_char().lower()
     resp.platform = reader.read_char().lower()
-    if resp.platform == "o": # Deprecated mac value
+    if resp.platform == "o":  # Deprecated mac value
         resp.platform = "m"
     resp.password_protected = reader.read_bool()
     resp.vac_enabled = reader.read_bool()
@@ -247,7 +259,8 @@ def parse_source(reader):
 
     return resp
 
-def parse_goldsrc(reader):
+
+def parse_goldsrc(reader: ByteReader) -> GoldSrcInfo:
     resp = GoldSrcInfo()
     resp.address = reader.read_cstring()
     resp.server_name = reader.read_cstring()
@@ -266,7 +279,7 @@ def parse_goldsrc(reader):
     if resp.is_mod and len(reader.peek()) > 2:
         resp.mod_website = reader.read_cstring()
         resp.mod_download = reader.read_cstring()
-        reader.read(1) # Skip a NULL byte
+        reader.read(1)  # Skip a NULL byte
         resp.mod_version = reader.read_uint32()
         resp.mod_size = reader.read_uint32()
         resp.multiplayer_only = reader.read_bool()

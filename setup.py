@@ -21,7 +21,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
-        "Topic :: Games/Entertainment"
+        "Topic :: Games/Entertainment",
     ],
-    python_requires=">=3.7"
+    python_requires=">=3.7",
 )
