@@ -1,26 +1,3 @@
-"""
-MIT License
-
-Copyright (c) 2020 Gabriel Huber
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
 from __future__ import annotations
 
 import asyncio
@@ -68,13 +45,13 @@ async def request_async(
 @overload
 async def request_async(
     address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[RulesProtocol]
-) -> Dict[str, str]:
+) -> Dict[Union[str, bytes], Union[str, bytes]]:
     ...
 
 
 async def request_async(
     address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[T]
-) -> Union[SourceInfo, GoldSrcInfo, List[Player], Dict[str, str]]:
+) -> Union[SourceInfo, GoldSrcInfo, List[Player], Dict[Union[str, bytes], Union[str, bytes]]]:
     conn = await A2SStreamAsync.create(address, timeout)
     response = await request_async_impl(conn, encoding, a2s_proto)
     conn.close()
@@ -113,7 +90,7 @@ async def request_async_impl(
     challenge: int = ...,
     retries: int = ...,
     ping: Optional[float] = ...,
-) -> Dict[str, str]:
+) -> Dict[Union[str, bytes], Union[str, bytes]]:
     ...
 
 
@@ -124,7 +101,7 @@ async def request_async_impl(
     challenge: int = 0,
     retries: int = 0,
     ping: Optional[float] = None,
-) -> Union[SourceInfo, GoldSrcInfo, Dict[str, str], List[Player]]:
+) -> Union[SourceInfo, GoldSrcInfo, Dict[Union[str, bytes], Union[str, bytes]], List[Player]]:
     send_time = time.monotonic()
     resp_data = await conn.request(a2s_proto.serialize_request(challenge))
     recv_time = time.monotonic()
@@ -163,7 +140,7 @@ class A2SProtocol(asyncio.DatagramProtocol):
         self.fragment_buf: List[A2SFragment] = []
 
     def connection_made(self, transport: asyncio.DatagramTransport) -> None:
-        self.transport = transport
+        self.transport: asyncio.DatagramTransport = transport
 
     def datagram_received(self, data: bytes, addr: Tuple[str, int]) -> None:
         header = data[:4]
@@ -207,9 +184,9 @@ class A2SStreamAsync:
     )
 
     def __init__(self, transport: asyncio.DatagramTransport, protocol: A2SProtocol, timeout: float) -> None:
-        self.transport = transport
-        self.protocol = protocol
-        self.timeout = timeout
+        self.transport: asyncio.DatagramTransport = transport
+        self.protocol: A2SProtocol = protocol
+        self.timeout: float = timeout
 
     def __del__(self) -> None:
         self.close()

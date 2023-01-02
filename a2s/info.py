@@ -1,26 +1,3 @@
-"""
-MIT License
-
-Copyright (c) 2020 Gabriel Huber
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
 from __future__ import annotations
 
 from typing import Optional, Tuple, Union
@@ -42,16 +19,16 @@ class SourceInfo(metaclass=DataclsMeta):
     protocol: int
     """Protocol version used by the server"""
 
-    server_name: str
+    server_name: Union[str, bytes]
     """Display name of the server"""
 
-    map_name: str
+    map_name: Union[str, bytes]
     """The currently loaded map"""
 
-    folder: str
+    folder: Union[str, bytes]
     """Name of the game directory"""
 
-    game: str
+    game: Union[str, bytes]
     """Name of the game"""
 
     app_id: int
@@ -66,13 +43,13 @@ class SourceInfo(metaclass=DataclsMeta):
     bot_count: int
     """Number of bots on the server"""
 
-    server_type: str
+    server_type: Union[str, bytes]
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
 
-    platform: str
+    platform: Union[str, bytes]
     """Operating system of the server
     'l', 'w', 'm' for Linux, Windows, macOS"""
 
@@ -82,7 +59,7 @@ class SourceInfo(metaclass=DataclsMeta):
     vac_enabled: bool
     """Server has VAC enabled"""
 
-    version: str
+    version: Union[str, bytes]
     """Version of the server software"""
 
     # Optional:
@@ -99,10 +76,10 @@ class SourceInfo(metaclass=DataclsMeta):
     stv_port: int
     """Port of the SourceTV server"""
 
-    stv_name: str
+    stv_name: Union[str, bytes]
     """Name of the SourceTV server"""
 
-    keywords: str
+    keywords: Union[str, bytes]
     """Tags that describe the gamemode being played"""
 
     game_id: int
@@ -134,19 +111,19 @@ class SourceInfo(metaclass=DataclsMeta):
 
 
 class GoldSrcInfo(metaclass=DataclsMeta):
-    address: str
+    address: Union[str, bytes]
     """IP Address and port of the server"""
 
-    server_name: str
+    server_name: Union[str, bytes]
     """Display name of the server"""
 
-    map_name: str
+    map_name: Union[str, bytes]
     """The currently loaded map"""
 
-    folder: str
+    folder: Union[str, bytes]
     """Name of the game directory"""
 
-    game: str
+    game: Union[str, bytes]
     """Name of the game"""
 
     player_count: int
@@ -158,13 +135,13 @@ class GoldSrcInfo(metaclass=DataclsMeta):
     protocol: int
     """Protocol version used by the server"""
 
-    server_type: str
+    server_type: Union[str, bytes]
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
 
-    platform: str
+    platform: Union[str, bytes]
     """Operating system of the server
     'l', 'w' for Linux and Windows"""
 
@@ -181,10 +158,10 @@ class GoldSrcInfo(metaclass=DataclsMeta):
     """Number of bots on the server"""
 
     # Optional:
-    mod_website: str
+    mod_website: Union[str, bytes]
     """URL to the mod website"""
 
-    mod_download: str
+    mod_download: Union[str, bytes]
     """URL to download the mod"""
 
     mod_version: int

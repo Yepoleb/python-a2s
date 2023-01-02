@@ -1,27 +1,3 @@
-"""
-MIT License
-
-Copyright (c) 2020 Gabriel Huber
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-
 from __future__ import annotations
 
 import io
@@ -29,8 +5,6 @@ import struct
 from typing import TYPE_CHECKING, Any, Optional, Tuple, Union
 
 from a2s.exceptions import BufferExhaustedError
-
-from .defaults import DEFAULT_ENCODING
 
 if TYPE_CHECKING:
     from typing_extensions import Literal
@@ -108,14 +82,14 @@ class ByteReader:
     def read_bool(self) -> bool:
         return bool(self.unpack_one("b"))
 
-    def read_char(self) -> str:
+    def read_char(self) -> Union[str, bytes]:
         char = self.unpack_one("c")
         if self.encoding is not None:
             return char.decode(self.encoding, errors="replace")
         else:
-            return char.decode(DEFAULT_ENCODING, errors="replace")
+            return char
 
-    def read_cstring(self, charsize: int = 1) -> str:
+    def read_cstring(self, charsize: int = 1) -> Union[str, bytes]:
         string = b""
         while True:
             c = self.read(charsize)
@@ -127,7 +101,7 @@ class ByteReader:
         if self.encoding is not None:
             return string.decode(self.encoding, errors="replace")
         else:
-            return string.decode(DEFAULT_ENCODING, errors="replace")
+            return string
 
 
 class ByteWriter:
@@ -182,8 +156,9 @@ class ByteWriter:
     def write_bool(self, val: bool) -> None:
         self.pack("b", val)
 
-    def write_char(self, val: str) -> None:
+    def write_char(self, val: Union[str, bytes]) -> None:
         if self.encoding is not None:
+            assert isinstance(val, str)
             self.pack("c", val.encode(self.encoding))
         else:
             self.pack("c", val)

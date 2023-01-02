@@ -1,27 +1,3 @@
-"""
-MIT License
-
-Copyright (c) 2020 Gabriel Huber
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-
 from typing import List, Optional, Tuple
 
 from a2s.a2s_async import request_async
@@ -34,18 +10,17 @@ A2S_PLAYER_RESPONSE = 0x44
 
 
 class Player(metaclass=DataclsMeta):
+    index: int
     """Apparently an entry index, but seems to be always 0"""
 
-    index: int
-
-    """Name of the player"""
     name: str
+    """Name of the player"""
 
-    """Score of the player"""
     score: int
+    """Score of the player"""
 
-    """Time the player has been connected to the server"""
     duration: float
+    """Time the player has been connected to the server"""
 
 
 def players(address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING) -> List[Player]:

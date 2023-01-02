@@ -32,8 +32,6 @@ jobs:
           python-version: "${{ matrix.python-version }}"
 
       - name: "Install Python deps @ ${{ matrix.python-version }}"
-        env:
-          PY_VER: "${{ matrix.python-version }}"
         run: |
           pip install -U .
 
@@ -42,10 +40,11 @@ jobs:
             node-version: "17"
       - run: npm install --location=global pyright@latest
 
+      - name: "Type Sanity @ ${{ matrix.python-version }}"
+        run: pyright --pythonversion ${{ matrix.python-version }}
+
       - name: "Type Coverage @ ${{ matrix.python-version }}"
-        run: |
-          pyright
-          pyright --ignoreexternal --lib --verifytypes a2s
+        run: pyright --ignoreexternal --lib --verifytypes a2s --pythonversion ${{ matrix.python-version }}
 
       - name: Lint
         if: ${{ github.event_name != 'pull_request' }}

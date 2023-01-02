@@ -1,27 +1,3 @@
-"""
-MIT License
-
-Copyright (c) 2020 Gabriel Huber
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-
 from __future__ import annotations
 
 import io
@@ -62,13 +38,15 @@ def request_sync(address: Tuple[str, int], timeout: float, encoding: str, a2s_pr
 
 
 @overload
-def request_sync(address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[RulesProtocol]) -> Dict[str, str]:
+def request_sync(
+    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[RulesProtocol]
+) -> Dict[Union[str, bytes], Union[str, bytes]]:
     ...
 
 
 def request_sync(
     address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[T]
-) -> Union[List[Player], GoldSrcInfo, SourceInfo, Dict[str, str]]:
+) -> Union[List[Player], GoldSrcInfo, SourceInfo, Dict[Union[str, bytes], Union[str, bytes]]]:
     conn = A2SStream(address, timeout)
     response = request_sync_impl(conn, encoding, a2s_proto)
     conn.close()
@@ -107,13 +85,13 @@ def request_sync_impl(
     challenge: int = ...,
     retries: int = ...,
     ping: Optional[float] = ...,
-) -> Dict[str, str]:
+) -> Dict[Union[str, bytes], Union[str, bytes]]:
     ...
 
 
 def request_sync_impl(
     conn: A2SStream, encoding: str, a2s_proto: Type[T], challenge: int = 0, retries: int = 0, ping: Optional[float] = None
-) -> Union[SourceInfo, GoldSrcInfo, Dict[str, str], List[Player]]:
+) -> Union[SourceInfo, GoldSrcInfo, List[Player], Dict[Union[str, bytes], Union[str, bytes]]]:
     send_time = time.monotonic()
     resp_data = conn.request(a2s_proto.serialize_request(challenge))
     recv_time = time.monotonic()
