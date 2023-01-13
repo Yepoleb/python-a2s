@@ -2,36 +2,9 @@ from __future__ import annotations
 
 import io
 import struct
-from typing import TYPE_CHECKING, Any, Optional, Tuple, Union
+from typing import Any, Optional, Tuple, Union
 
 from a2s.exceptions import BufferExhaustedError
-
-if TYPE_CHECKING:
-    from typing_extensions import Literal
-
-STRUCT_OPTIONS = Literal[
-    "x",
-    "c",
-    "b",
-    "B",
-    "?",
-    "h",
-    "H",
-    "i",
-    "I",
-    "l",
-    "L",
-    "q",
-    "Q",
-    "n",
-    "N",
-    "e",
-    "f",
-    "d",
-    "s",
-    "p",
-    "P",
-]
 
 
 class ByteReader:
@@ -64,12 +37,12 @@ class ByteReader:
         self.stream.seek(cur_pos, io.SEEK_SET)
         return data
 
-    def unpack(self, fmt: STRUCT_OPTIONS) -> Tuple[Any, ...]:
+    def unpack(self, fmt: str) -> Tuple[Any, ...]:
         new_fmt = self.endian + fmt
         fmt_size = struct.calcsize(fmt)
         return struct.unpack(new_fmt, self.read(fmt_size))
 
-    def unpack_one(self, fmt: STRUCT_OPTIONS) -> Any:
+    def unpack_one(self, fmt: str) -> Any:
         values = self.unpack(fmt)
         assert len(values) == 1
         return values[0]
