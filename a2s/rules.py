@@ -9,13 +9,17 @@ A2S_RULES_RESPONSE = 0x45
 
 
 def rules(
-    address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
 ) -> Dict[Union[str, bytes], Union[str, bytes]]:
     return request_sync(address, timeout, encoding, RulesProtocol)
 
 
 async def arules(
-    address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
 ) -> Dict[Union[str, bytes], Union[str, bytes]]:
     return await request_async(address, timeout, encoding, RulesProtocol)
 
@@ -35,5 +39,8 @@ class RulesProtocol:
     ) -> Dict[Union[str, bytes], Union[str, bytes]]:
         rule_count = reader.read_int16()
         # Have to use tuples to preserve evaluation order
-        resp = dict((reader.read_cstring(), reader.read_cstring()) for _ in range(rule_count))
+        resp = dict(
+            (reader.read_cstring(), reader.read_cstring())
+            for _ in range(rule_count)
+        )
         return resp

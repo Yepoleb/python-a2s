@@ -10,7 +10,27 @@ if TYPE_CHECKING:
     from typing_extensions import Literal
 
 STRUCT_OPTIONS = Literal[
-    "x", "c", "b", "B", "?", "h", "H", "i", "I", "l", "L", "q", "Q", "n", "N", "e", "f", "d", "s", "p", "P"
+    "x",
+    "c",
+    "b",
+    "B",
+    "?",
+    "h",
+    "H",
+    "i",
+    "I",
+    "l",
+    "L",
+    "q",
+    "Q",
+    "n",
+    "N",
+    "e",
+    "f",
+    "d",
+    "s",
+    "p",
+    "P",
 ]
 
 
@@ -21,7 +41,12 @@ class ByteReader:
         "encoding",
     )
 
-    def __init__(self, stream: io.BytesIO, endian: str = "=", encoding: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        stream: io.BytesIO,
+        endian: str = "=",
+        encoding: Optional[str] = None,
+    ) -> None:
         self.stream: io.BytesIO = stream
         self.endian: str = endian
         self.encoding: Optional[str] = encoding
@@ -111,7 +136,12 @@ class ByteWriter:
         "encoding",
     )
 
-    def __init__(self, stream: io.BytesIO, endian: str = "=", encoding: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        stream: io.BytesIO,
+        endian: str = "=",
+        encoding: Optional[str] = None,
+    ) -> None:
         self.stream: io.BytesIO = stream
         self.endian: str = endian
         self.encoding: Optional[str] = encoding

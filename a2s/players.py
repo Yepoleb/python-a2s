@@ -23,12 +23,18 @@ class Player(metaclass=DataclsMeta):
     """Time the player has been connected to the server"""
 
 
-def players(address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING) -> List[Player]:
+def players(
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
+) -> List[Player]:
     return request_sync(address, timeout, encoding, PlayersProtocol)
 
 
 async def aplayers(
-    address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
 ) -> List[Player]:
     return await request_async(address, timeout, encoding, PlayersProtocol)
 
@@ -43,7 +49,9 @@ class PlayersProtocol:
         return b"\x55" + challenge.to_bytes(4, "little")
 
     @staticmethod
-    def deserialize_response(reader: ByteReader, response_type: int, ping: Optional[float]) -> List[Player]:
+    def deserialize_response(
+        reader: ByteReader, response_type: int, ping: Optional[float]
+    ) -> List[Player]:
         player_count = reader.read_uint8()
         resp = [
             Player(

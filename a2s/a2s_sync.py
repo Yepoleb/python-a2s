@@ -27,26 +27,42 @@ T = TypeVar("T", InfoProtocol, RulesProtocol, PlayersProtocol)
 
 @overload
 def request_sync(
-    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[InfoProtocol]
+    address: Tuple[str, int],
+    timeout: float,
+    encoding: str,
+    a2s_proto: Type[InfoProtocol],
 ) -> Union[SourceInfo, GoldSrcInfo]:
     ...
 
 
 @overload
-def request_sync(address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[PlayersProtocol]) -> List[Player]:
+def request_sync(
+    address: Tuple[str, int],
+    timeout: float,
+    encoding: str,
+    a2s_proto: Type[PlayersProtocol],
+) -> List[Player]:
     ...
 
 
 @overload
 def request_sync(
-    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[RulesProtocol]
+    address: Tuple[str, int],
+    timeout: float,
+    encoding: str,
+    a2s_proto: Type[RulesProtocol],
 ) -> Dict[Union[str, bytes], Union[str, bytes]]:
     ...
 
 
 def request_sync(
     address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[T]
-) -> Union[List[Player], GoldSrcInfo, SourceInfo, Dict[Union[str, bytes], Union[str, bytes]]]:
+) -> Union[
+    List[Player],
+    GoldSrcInfo,
+    SourceInfo,
+    Dict[Union[str, bytes], Union[str, bytes]],
+]:
     conn = A2SStream(address, timeout)
     response = request_sync_impl(conn, encoding, a2s_proto)
     conn.close()
@@ -90,8 +106,18 @@ def request_sync_impl(
 
 
 def request_sync_impl(
-    conn: A2SStream, encoding: str, a2s_proto: Type[T], challenge: int = 0, retries: int = 0, ping: Optional[float] = None
-) -> Union[SourceInfo, GoldSrcInfo, List[Player], Dict[Union[str, bytes], Union[str, bytes]]]:
+    conn: A2SStream,
+    encoding: str,
+    a2s_proto: Type[T],
+    challenge: int = 0,
+    retries: int = 0,
+    ping: Optional[float] = None,
+) -> Union[
+    SourceInfo,
+    GoldSrcInfo,
+    List[Player],
+    Dict[Union[str, bytes], Union[str, bytes]],
+]:
     send_time = time.monotonic()
     resp_data = conn.request(a2s_proto.serialize_request(challenge))
     recv_time = time.monotonic()
@@ -104,12 +130,18 @@ def request_sync_impl(
     response_type = reader.read_uint8()
     if response_type == A2S_CHALLENGE_RESPONSE:
         if retries >= DEFAULT_RETRIES:
-            raise BrokenMessageError("Server keeps sending challenge responses")
+            raise BrokenMessageError(
+                "Server keeps sending challenge responses"
+            )
         challenge = reader.read_uint32()
-        return request_sync_impl(conn, encoding, a2s_proto, challenge, retries + 1, ping)
+        return request_sync_impl(
+            conn, encoding, a2s_proto, challenge, retries + 1, ping
+        )
 
     if not a2s_proto.validate_response_type(response_type):
-        raise BrokenMessageError("Invalid response type: " + hex(response_type))
+        raise BrokenMessageError(
+            "Invalid response type: " + hex(response_type)
+        )
 
     return a2s_proto.deserialize_response(reader, response_type, ping)
 
@@ -122,7 +154,9 @@ class A2SStream:
 
     def __init__(self, address: Tuple[str, int], timeout: float) -> None:
         self.address: Tuple[str, int] = address
-        self._socket: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket: socket.socket = socket.socket(
+            socket.AF_INET, socket.SOCK_DGRAM
+        )
         self._socket.settimeout(timeout)
 
     def __del__(self) -> None:
@@ -150,7 +184,11 @@ class A2SStream:
             # Sometimes there's an additional header present
             if reassembled.startswith(b"\xFF\xFF\xFF\xFF"):
                 reassembled = reassembled[4:]
-            logger.debug("Received %s part packet with content: %r", len(fragments), reassembled)
+            logger.debug(
+                "Received %s part packet with content: %r",
+                len(fragments),
+                reassembled,
+            )
             return reassembled
         else:
             raise BrokenMessageError("Invalid packet header: " + repr(header))

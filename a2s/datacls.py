@@ -29,11 +29,16 @@ class DataclsBase:
             yield (name, getattr(self, name))
 
     def __repr__(self) -> str:
-        return "{}({})".format(self.__class__.__name__, ", ".join(name + "=" + repr(value) for name, value in self))
+        return "{}({})".format(
+            self.__class__.__name__,
+            ", ".join(name + "=" + repr(value) for name, value in self),
+        )
 
 
 class DataclsMeta(type):
-    def __new__(cls, name: str, bases: Tuple[type, ...], prop: Dict[str, Any]) -> Self:
+    def __new__(
+        cls, name: str, bases: Tuple[type, ...], prop: Dict[str, Any]
+    ) -> Self:
         values: OrderedDict[str, Any] = OrderedDict()
         for member_name in prop["__annotations__"].keys():
             # Check if member has a default value set as class variable

@@ -182,13 +182,17 @@ class GoldSrcInfo(metaclass=DataclsMeta):
 
 
 def info(
-    address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
 ) -> Union[SourceInfo, GoldSrcInfo]:
     return request_sync(address, timeout, encoding, InfoProtocol)
 
 
 async def ainfo(
-    address: Tuple[str, int], timeout: float = DEFAULT_TIMEOUT, encoding: str = DEFAULT_ENCODING
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
 ) -> Union[SourceInfo, GoldSrcInfo]:
     return await request_async(address, timeout, encoding, InfoProtocol)
 
@@ -201,7 +205,9 @@ class InfoProtocol:
     @staticmethod
     def serialize_request(challenge: int) -> bytes:
         if challenge:
-            return b"\x54Source Engine Query\0" + challenge.to_bytes(4, "little")
+            return b"\x54Source Engine Query\0" + challenge.to_bytes(
+                4, "little"
+            )
         else:
             return b"\x54Source Engine Query\0"
 
