@@ -8,12 +8,6 @@ from a2s.exceptions import BufferExhaustedError
 
 
 class ByteReader:
-    __slots__ = (
-        "stream",
-        "endian",
-        "encoding",
-    )
-
     def __init__(
         self,
         stream: io.BytesIO,
@@ -103,12 +97,6 @@ class ByteReader:
 
 
 class ByteWriter:
-    __slots__ = (
-        "stream",
-        "endian",
-        "encoding",
-    )
-
     def __init__(
         self,
         stream: io.BytesIO,

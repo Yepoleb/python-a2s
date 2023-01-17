@@ -87,15 +87,7 @@ async def request_async_impl(
 
 
 class A2SProtocol(asyncio.DatagramProtocol):
-    __slots__ = (
-        "recv_queue",
-        "error_event",
-        "error",
-        "fragment_buf",
-        "transport",
-    )
-
-    def __init__(self):
+    def __init__(self) -> None:
         self.recv_queue: asyncio.Queue[bytes] = asyncio.Queue()
         self.error_event: asyncio.Event = asyncio.Event()
         self.error: Optional[Exception] = None
@@ -147,12 +139,6 @@ class A2SProtocol(asyncio.DatagramProtocol):
 
 
 class A2SStreamAsync:
-    __slots__ = (
-        "transport",
-        "protocol",
-        "timeout",
-    )
-
     def __init__(
         self,
         transport: asyncio.DatagramTransport,

@@ -71,11 +71,6 @@ def request_sync_impl(
 
 
 class A2SStream:
-    __slots__ = (
-        "address",
-        "_socket",
-    )
-
     def __init__(self, address: Tuple[str, int], timeout: float) -> None:
         self.address: Tuple[str, int] = address
         self._socket: socket.socket = socket.socket(
