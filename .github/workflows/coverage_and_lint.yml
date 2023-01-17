@@ -1,0 +1,60 @@
+name: Type Coverage and Linting
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # python-version: [ '3.7', '3.8', '3.9', '3.10', '3.11' ]
+        python-version: [ '3.7' ]
+
+    name: "Type Coverage and Linting @ ${{ matrix.python-version }}"
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Setup Python @ ${{ matrix.python-version }}"
+        uses: actions/setup-python@v3
+        with:
+          python-version: "${{ matrix.python-version }}"
+
+      - name: "Install Python deps @ ${{ matrix.python-version }}"
+        run: |
+          pip install -U .
+
+      - uses: actions/setup-node@v3
+        with:
+            node-version: "17"
+      - run: npm install --location=global pyright@latest
+
+      - name: "Type Sanity @ ${{ matrix.python-version }}"
+        run: pyright --pythonversion ${{ matrix.python-version }}
+
+      - name: "Type Coverage @ ${{ matrix.python-version }}"
+        run: pyright --ignoreexternal --lib --verifytypes a2s --pythonversion ${{ matrix.python-version }}
+
+      - name: Lint
+        uses: github/super-linter/slim@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: master
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_PYTHON_BLACK: true
+          VALIDATE_PYTHON_ISORT: true
+          LINTER_RULES_PATH: /
+          PYTHON_ISORT_CONFIG_FILE: pyproject.toml
+          PYTHON_BLACK_CONFIG_FILE: pyproject.toml

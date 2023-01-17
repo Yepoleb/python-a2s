@@ -1,0 +1,20 @@
+[tool.black]
+line-length = 79
+target-version = ["py37"]
+
+[tool.isort]
+profile = "black"
+combine_as_imports = true
+combine_star = true
+line_length = 79
+
+[tool.pyright]
+include = ["a2s/**/*.py", "a2s/**/*.pyi"]
+useLibraryCodeForTypes = true
+typeCheckingMode = "strict"
+pythonVersion = "3.7"
+reportImportCycles = false
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

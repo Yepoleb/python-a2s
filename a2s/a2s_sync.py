@@ -1,29 +1,44 @@
-import socket
-import logging
-import time
+from __future__ import annotations
+
 import io
+import logging
+import socket
+import time
+from typing import Any, Optional, Tuple, Type
 
-from a2s.exceptions import BrokenMessageError
 from a2s.a2s_fragment import decode_fragment
-from a2s.defaults import DEFAULT_RETRIES
+from a2s.a2s_protocol import A2SProtocol
 from a2s.byteio import ByteReader
-
-
+from a2s.defaults import DEFAULT_RETRIES
+from a2s.exceptions import BrokenMessageError
 
 HEADER_SIMPLE = b"\xFF\xFF\xFF\xFF"
 HEADER_MULTI = b"\xFE\xFF\xFF\xFF"
 A2S_CHALLENGE_RESPONSE = 0x41
 
-logger = logging.getLogger("a2s")
+logger: logging.Logger = logging.getLogger("a2s")
 
 
-def request_sync(address, timeout, encoding, a2s_proto):
+def request_sync(
+    address: Tuple[str, int],
+    timeout: float,
+    encoding: str,
+    a2s_proto: Type[A2SProtocol],
+) -> Any:
     conn = A2SStream(address, timeout)
     response = request_sync_impl(conn, encoding, a2s_proto)
     conn.close()
     return response
 
-def request_sync_impl(conn, encoding, a2s_proto, challenge=0, retries=0, ping=None):
+
+def request_sync_impl(
+    conn: A2SStream,
+    encoding: str,
+    a2s_proto: Type[A2SProtocol],
+    challenge: int = 0,
+    retries: int = 0,
+    ping: Optional[float] = None,
+) -> Any:
     send_time = time.monotonic()
     resp_data = conn.request(a2s_proto.serialize_request(challenge))
     recv_time = time.monotonic()
@@ -31,40 +46,44 @@ def request_sync_impl(conn, encoding, a2s_proto, challenge=0, retries=0, ping=No
     if retries == 0:
         ping = recv_time - send_time
 
-    reader = ByteReader(
-        io.BytesIO(resp_data), endian="<", encoding=encoding)
+    reader = ByteReader(io.BytesIO(resp_data), endian="<", encoding=encoding)
 
     response_type = reader.read_uint8()
     if response_type == A2S_CHALLENGE_RESPONSE:
         if retries >= DEFAULT_RETRIES:
             raise BrokenMessageError(
-                "Server keeps sending challenge responses")
+                "Server keeps sending challenge responses"
+            )
         challenge = reader.read_uint32()
         return request_sync_impl(
-            conn, encoding, a2s_proto, challenge, retries + 1, ping)
+            conn, encoding, a2s_proto, challenge, retries + 1, ping
+        )
 
     if not a2s_proto.validate_response_type(response_type):
         raise BrokenMessageError(
-            "Invalid response type: " + hex(response_type))
+            "Invalid response type: " + hex(response_type)
+        )
 
     return a2s_proto.deserialize_response(reader, response_type, ping)
 
 
 class A2SStream:
-    def __init__(self, address, timeout):
-        self.address = address
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    def __init__(self, address: Tuple[str, int], timeout: float) -> None:
+        self.address: Tuple[str, int] = address
+        self._socket: socket.socket = socket.socket(
+            socket.AF_INET, socket.SOCK_DGRAM
+        )
         self._socket.settimeout(timeout)
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.close()
 
-    def send(self, data):
+    def send(self, data: bytes) -> None:
         logger.debug("Sending packet: %r", data)
         packet = HEADER_SIMPLE + data
         self._socket.sendto(packet, self.address)
 
-    def recv(self):
+    def recv(self) -> bytes:
         packet = self._socket.recv(65535)
         header = packet[:4]
         data = packet[4:]
@@ -81,16 +100,18 @@ class A2SStream:
             # Sometimes there's an additional header present
             if reassembled.startswith(b"\xFF\xFF\xFF\xFF"):
                 reassembled = reassembled[4:]
-            logger.debug("Received %s part packet with content: %r",
-                         len(fragments), reassembled)
+            logger.debug(
+                "Received %s part packet with content: %r",
+                len(fragments),
+                reassembled,
+            )
             return reassembled
         else:
-            raise BrokenMessageError(
-                "Invalid packet header: " + repr(header))
+            raise BrokenMessageError("Invalid packet header: " + repr(header))
 
-    def request(self, payload):
+    def request(self, payload: bytes) -> bytes:
         self.send(payload)
         return self.recv()
 
-    def close(self):
+    def close(self) -> None:
         self._socket.close()

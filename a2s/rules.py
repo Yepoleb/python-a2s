@@ -1,38 +1,47 @@
-import io
+from typing import Dict, Optional, Tuple, Union
 
-from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
-from a2s.a2s_sync import request_sync
 from a2s.a2s_async import request_async
+from a2s.a2s_protocol import A2SProtocol
+from a2s.a2s_sync import request_sync
 from a2s.byteio import ByteReader
-from a2s.datacls import DataclsMeta
-
-
+from a2s.defaults import DEFAULT_ENCODING, DEFAULT_TIMEOUT
 
 A2S_RULES_RESPONSE = 0x45
 
 
-def rules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+def rules(
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
+) -> Dict[Union[str, bytes], Union[str, bytes]]:
     return request_sync(address, timeout, encoding, RulesProtocol)
 
-async def arules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+
+async def arules(
+    address: Tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str = DEFAULT_ENCODING,
+) -> Dict[Union[str, bytes], Union[str, bytes]]:
     return await request_async(address, timeout, encoding, RulesProtocol)
 
 
-class RulesProtocol:
+class RulesProtocol(A2SProtocol):
     @staticmethod
-    def validate_response_type(response_type):
+    def validate_response_type(response_type: int) -> bool:
         return response_type == A2S_RULES_RESPONSE
 
     @staticmethod
-    def serialize_request(challenge):
+    def serialize_request(challenge: int) -> bytes:
         return b"\x56" + challenge.to_bytes(4, "little")
 
     @staticmethod
-    def deserialize_response(reader, response_type, ping):
+    def deserialize_response(
+        reader: ByteReader, response_type: int, ping: Optional[float]
+    ) -> Dict[Union[str, bytes], Union[str, bytes]]:
         rule_count = reader.read_int16()
         # Have to use tuples to preserve evaluation order
         resp = dict(
             (reader.read_cstring(), reader.read_cstring())
-            for rule_num in range(rule_count)
+            for _ in range(rule_count)
         )
         return resp

@@ -15,13 +15,15 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Yepoleb/python-a2s",
     packages=["a2s"],
+    include_package_data=True,
     license="MIT License",
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
-        "Topic :: Games/Entertainment"
+        "Topic :: Games/Entertainment",
+        "Typing :: Typed",
     ],
-    python_requires=">=3.7"
+    python_requires=">=3.7",
 )
