@@ -14,13 +14,6 @@ from .byteio import ByteReader
 A2S_INFO_RESPONSE = 0x49
 A2S_INFO_RESPONSE_LEGACY = 0x6D
 
-__all__ = (
-    "SourceInfo",
-    "GoldSrcInfo",
-    "info",
-    "ainfo",
-)
-
 
 class SourceInfo(metaclass=DataclsMeta):
 

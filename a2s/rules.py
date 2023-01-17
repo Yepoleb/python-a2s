@@ -8,11 +8,6 @@ from a2s.defaults import DEFAULT_ENCODING, DEFAULT_TIMEOUT
 
 A2S_RULES_RESPONSE = 0x45
 
-__all__ = (
-    "rules",
-    "arules",
-)
-
 
 def rules(
     address: Tuple[str, int],

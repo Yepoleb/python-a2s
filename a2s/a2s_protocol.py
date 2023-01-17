@@ -1,6 +1,3 @@
-__all__ = ("A2SProtocol",)
-
-
 from typing import Any, Optional
 
 from .byteio import ByteReader

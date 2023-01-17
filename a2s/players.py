@@ -9,12 +9,6 @@ from a2s.defaults import DEFAULT_ENCODING, DEFAULT_TIMEOUT
 
 A2S_PLAYER_RESPONSE = 0x44
 
-__all__ = (
-    "Player",
-    "players",
-    "aplayers",
-)
-
 
 class Player(metaclass=DataclsMeta):
     index: int
