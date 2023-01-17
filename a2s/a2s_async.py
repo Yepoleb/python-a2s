@@ -6,7 +6,7 @@ import logging
 import time
 from typing import (
     TYPE_CHECKING,
-    Dict,
+    Any,
     List,
     NoReturn,
     Optional,
@@ -14,7 +14,6 @@ from typing import (
     Type,
     TypeVar,
     Union,
-    overload,
 )
 
 from a2s.a2s_fragment import A2SFragment, decode_fragment
@@ -22,8 +21,8 @@ from a2s.byteio import ByteReader
 from a2s.defaults import DEFAULT_RETRIES
 from a2s.exceptions import BrokenMessageError
 
-from .info import GoldSrcInfo, InfoProtocol, SourceInfo
-from .players import Player, PlayersProtocol
+from .info import InfoProtocol
+from .players import PlayersProtocol
 from .rules import RulesProtocol
 
 if TYPE_CHECKING:
@@ -36,102 +35,29 @@ PROTOCOLS = Union[InfoProtocol, PlayersProtocol, RulesProtocol]
 
 logger: logging.Logger = logging.getLogger("a2s")
 
-T = TypeVar("T", InfoProtocol, PlayersProtocol, RulesProtocol)
+ProtocolT = TypeVar("ProtocolT", InfoProtocol, PlayersProtocol, RulesProtocol)
 
 
-@overload
 async def request_async(
     address: Tuple[str, int],
     timeout: float,
     encoding: str,
-    a2s_proto: Type[InfoProtocol],
-) -> Union[SourceInfo, GoldSrcInfo]:
-    ...
-
-
-@overload
-async def request_async(
-    address: Tuple[str, int],
-    timeout: float,
-    encoding: str,
-    a2s_proto: Type[PlayersProtocol],
-) -> List[Player]:
-    ...
-
-
-@overload
-async def request_async(
-    address: Tuple[str, int],
-    timeout: float,
-    encoding: str,
-    a2s_proto: Type[RulesProtocol],
-) -> Dict[Union[str, bytes], Union[str, bytes]]:
-    ...
-
-
-async def request_async(
-    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[T]
-) -> Union[
-    SourceInfo,
-    GoldSrcInfo,
-    List[Player],
-    Dict[Union[str, bytes], Union[str, bytes]],
-]:
+    a2s_proto: Type[ProtocolT],
+) -> Any:
     conn = await A2SStreamAsync.create(address, timeout)
     response = await request_async_impl(conn, encoding, a2s_proto)
     conn.close()
     return response
 
 
-@overload
 async def request_async_impl(
     conn: A2SStreamAsync,
     encoding: str,
-    a2s_proto: Type[InfoProtocol],
-    challenge: int = ...,
-    retries: int = ...,
-    ping: Optional[float] = ...,
-) -> Union[SourceInfo, GoldSrcInfo]:
-    ...
-
-
-@overload
-async def request_async_impl(
-    conn: A2SStreamAsync,
-    encoding: str,
-    a2s_proto: Type[PlayersProtocol],
-    challenge: int = ...,
-    retries: int = ...,
-    ping: Optional[float] = ...,
-) -> List[Player]:
-    ...
-
-
-@overload
-async def request_async_impl(
-    conn: A2SStreamAsync,
-    encoding: str,
-    a2s_proto: Type[RulesProtocol],
-    challenge: int = ...,
-    retries: int = ...,
-    ping: Optional[float] = ...,
-) -> Dict[Union[str, bytes], Union[str, bytes]]:
-    ...
-
-
-async def request_async_impl(
-    conn: A2SStreamAsync,
-    encoding: str,
-    a2s_proto: Type[T],
+    a2s_proto: Type[ProtocolT],
     challenge: int = 0,
     retries: int = 0,
     ping: Optional[float] = None,
-) -> Union[
-    SourceInfo,
-    GoldSrcInfo,
-    Dict[Union[str, bytes], Union[str, bytes]],
-    List[Player],
-]:
+) -> Any:
     send_time = time.monotonic()
     resp_data = await conn.request(a2s_proto.serialize_request(challenge))
     recv_time = time.monotonic()
