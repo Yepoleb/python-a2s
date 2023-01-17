@@ -4,29 +4,26 @@ import io
 import logging
 import socket
 import time
-from typing import Any, Optional, Tuple, Type, TypeVar, Union
+from typing import Any, Optional, Tuple, Type
 
 from a2s.a2s_fragment import decode_fragment
+from a2s.a2s_protocol import A2SProtocol
 from a2s.byteio import ByteReader
 from a2s.defaults import DEFAULT_RETRIES
 from a2s.exceptions import BrokenMessageError
 
-from .info import InfoProtocol
-from .players import PlayersProtocol
-from .rules import RulesProtocol
-
 HEADER_SIMPLE = b"\xFF\xFF\xFF\xFF"
 HEADER_MULTI = b"\xFE\xFF\xFF\xFF"
 A2S_CHALLENGE_RESPONSE = 0x41
-PROTOCOLS = Union[InfoProtocol, RulesProtocol, PlayersProtocol]
 
 logger: logging.Logger = logging.getLogger("a2s")
 
-T = TypeVar("T", InfoProtocol, RulesProtocol, PlayersProtocol)
-
 
 def request_sync(
-    address: Tuple[str, int], timeout: float, encoding: str, a2s_proto: Type[T]
+    address: Tuple[str, int],
+    timeout: float,
+    encoding: str,
+    a2s_proto: Type[A2SProtocol],
 ) -> Any:
     conn = A2SStream(address, timeout)
     response = request_sync_impl(conn, encoding, a2s_proto)
@@ -37,7 +34,7 @@ def request_sync(
 def request_sync_impl(
     conn: A2SStream,
     encoding: str,
-    a2s_proto: Type[T],
+    a2s_proto: Type[A2SProtocol],
     challenge: int = 0,
     retries: int = 0,
     ping: Optional[float] = None,

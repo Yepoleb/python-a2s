@@ -1,6 +1,7 @@
 from typing import Dict, Optional, Tuple, Union
 
 from a2s.a2s_async import request_async
+from a2s.a2s_protocol import A2SProtocol
 from a2s.a2s_sync import request_sync
 from a2s.byteio import ByteReader
 from a2s.defaults import DEFAULT_ENCODING, DEFAULT_TIMEOUT
@@ -29,7 +30,7 @@ async def arules(
     return await request_async(address, timeout, encoding, RulesProtocol)
 
 
-class RulesProtocol:
+class RulesProtocol(A2SProtocol):
     @staticmethod
     def validate_response_type(response_type: int) -> bool:
         return response_type == A2S_RULES_RESPONSE

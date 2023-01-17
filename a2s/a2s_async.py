@@ -4,26 +4,13 @@ import asyncio
 import io
 import logging
 import time
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    List,
-    NoReturn,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, List, NoReturn, Optional, Tuple, Type
 
 from a2s.a2s_fragment import A2SFragment, decode_fragment
+from a2s.a2s_protocol import A2SProtocol
 from a2s.byteio import ByteReader
 from a2s.defaults import DEFAULT_RETRIES
 from a2s.exceptions import BrokenMessageError
-
-from .info import InfoProtocol
-from .players import PlayersProtocol
-from .rules import RulesProtocol
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -31,18 +18,15 @@ if TYPE_CHECKING:
 HEADER_SIMPLE = b"\xFF\xFF\xFF\xFF"
 HEADER_MULTI = b"\xFE\xFF\xFF\xFF"
 A2S_CHALLENGE_RESPONSE = 0x41
-PROTOCOLS = Union[InfoProtocol, PlayersProtocol, RulesProtocol]
 
 logger: logging.Logger = logging.getLogger("a2s")
-
-ProtocolT = TypeVar("ProtocolT", InfoProtocol, PlayersProtocol, RulesProtocol)
 
 
 async def request_async(
     address: Tuple[str, int],
     timeout: float,
     encoding: str,
-    a2s_proto: Type[ProtocolT],
+    a2s_proto: Type[A2SProtocol],
 ) -> Any:
     conn = await A2SStreamAsync.create(address, timeout)
     response = await request_async_impl(conn, encoding, a2s_proto)
@@ -53,7 +37,7 @@ async def request_async(
 async def request_async_impl(
     conn: A2SStreamAsync,
     encoding: str,
-    a2s_proto: Type[ProtocolT],
+    a2s_proto: Type[A2SProtocol],
     challenge: int = 0,
     retries: int = 0,
     ping: Optional[float] = None,
@@ -86,7 +70,7 @@ async def request_async_impl(
     return a2s_proto.deserialize_response(reader, response_type, ping)
 
 
-class A2SProtocol(asyncio.DatagramProtocol):
+class A2SDatagramProtocol(asyncio.DatagramProtocol):
     def __init__(self) -> None:
         self.recv_queue: asyncio.Queue[bytes] = asyncio.Queue()
         self.error_event: asyncio.Event = asyncio.Event()
@@ -142,11 +126,11 @@ class A2SStreamAsync:
     def __init__(
         self,
         transport: asyncio.DatagramTransport,
-        protocol: A2SProtocol,
+        protocol: A2SDatagramProtocol,
         timeout: float,
     ) -> None:
         self.transport: asyncio.DatagramTransport = transport
-        self.protocol: A2SProtocol = protocol
+        self.protocol: A2SDatagramProtocol = protocol
         self.timeout: float = timeout
 
     def __del__(self) -> None:
@@ -156,7 +140,7 @@ class A2SStreamAsync:
     async def create(cls, address: Tuple[str, int], timeout: float) -> Self:
         loop = asyncio.get_running_loop()
         transport, protocol = await loop.create_datagram_endpoint(
-            lambda: A2SProtocol(), remote_addr=address
+            lambda: A2SDatagramProtocol(), remote_addr=address
         )
         return cls(transport, protocol, timeout)
 

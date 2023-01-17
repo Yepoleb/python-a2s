@@ -8,6 +8,7 @@ from a2s.datacls import DataclsMeta
 from a2s.defaults import DEFAULT_ENCODING, DEFAULT_TIMEOUT
 from a2s.exceptions import BufferExhaustedError
 
+from .a2s_protocol import A2SProtocol
 from .byteio import ByteReader
 
 A2S_INFO_RESPONSE = 0x49
@@ -204,7 +205,7 @@ async def ainfo(
     return await request_async(address, timeout, encoding, InfoProtocol)
 
 
-class InfoProtocol:
+class InfoProtocol(A2SProtocol):
     @staticmethod
     def validate_response_type(response_type: int) -> bool:
         return response_type in (A2S_INFO_RESPONSE, A2S_INFO_RESPONSE_LEGACY)

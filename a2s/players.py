@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple
 
 from a2s.a2s_async import request_async
+from a2s.a2s_protocol import A2SProtocol
 from a2s.a2s_sync import request_sync
 from a2s.byteio import ByteReader
 from a2s.datacls import DataclsMeta
@@ -45,7 +46,7 @@ async def aplayers(
     return await request_async(address, timeout, encoding, PlayersProtocol)
 
 
-class PlayersProtocol:
+class PlayersProtocol(A2SProtocol):
     @staticmethod
     def validate_response_type(response_type: int) -> bool:
         return response_type == A2S_PLAYER_RESPONSE
