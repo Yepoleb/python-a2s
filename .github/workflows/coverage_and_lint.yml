@@ -48,7 +48,6 @@ jobs:
         run: pyright --ignoreexternal --lib --verifytypes a2s --pythonversion ${{ matrix.python-version }}
 
       - name: Lint
-        if: ${{ github.event_name != 'pull_request' }}
         uses: github/super-linter/slim@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
