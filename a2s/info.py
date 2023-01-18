@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, TypeAlias
 
 from a2s.a2s_async import request_async
 from a2s.a2s_sync import request_sync
@@ -14,22 +14,24 @@ from .byteio import ByteReader
 A2S_INFO_RESPONSE = 0x49
 A2S_INFO_RESPONSE_LEGACY = 0x6D
 
+StrOrBytes: TypeAlias = Union[str, bytes]
+
 
 class SourceInfo(metaclass=DataclsMeta):
 
     protocol: int
     """Protocol version used by the server"""
 
-    server_name: Union[str, bytes]
+    server_name: StrOrBytes
     """Display name of the server"""
 
-    map_name: Union[str, bytes]
+    map_name: StrOrBytes
     """The currently loaded map"""
 
-    folder: Union[str, bytes]
+    folder: StrOrBytes
     """Name of the game directory"""
 
-    game: Union[str, bytes]
+    game: StrOrBytes
     """Name of the game"""
 
     app_id: int
@@ -44,13 +46,13 @@ class SourceInfo(metaclass=DataclsMeta):
     bot_count: int
     """Number of bots on the server"""
 
-    server_type: Union[str, bytes]
+    server_type: StrOrBytes
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
 
-    platform: Union[str, bytes]
+    platform: StrOrBytes
     """Operating system of the server
     'l', 'w', 'm' for Linux, Windows, macOS"""
 
@@ -60,7 +62,7 @@ class SourceInfo(metaclass=DataclsMeta):
     vac_enabled: bool
     """Server has VAC enabled"""
 
-    version: Union[str, bytes]
+    version: StrOrBytes
     """Version of the server software"""
 
     # Optional:
@@ -68,22 +70,22 @@ class SourceInfo(metaclass=DataclsMeta):
     """Extra data field, used to indicate if extra values are
     included in the response"""
 
-    port: int
+    port: Optional[int]
     """Port of the game server."""
 
-    steam_id: int
+    steam_id: Optional[int]
     """Steam ID of the server"""
 
-    stv_port: int
+    stv_port: Optional[int]
     """Port of the SourceTV server"""
 
-    stv_name: Union[str, bytes]
+    stv_name: Optional[StrOrBytes]
     """Name of the SourceTV server"""
 
-    keywords: Union[str, bytes]
+    keywords: Optional[StrOrBytes]
     """Tags that describe the gamemode being played"""
 
-    game_id: int
+    game_id: Optional[int]
     """Game ID for games that have an app ID too high for 16bit."""
 
     # Client determined values:
@@ -112,19 +114,19 @@ class SourceInfo(metaclass=DataclsMeta):
 
 
 class GoldSrcInfo(metaclass=DataclsMeta):
-    address: Union[str, bytes]
+    address: StrOrBytes
     """IP Address and port of the server"""
 
-    server_name: Union[str, bytes]
+    server_name: StrOrBytes
     """Display name of the server"""
 
-    map_name: Union[str, bytes]
+    map_name: StrOrBytes
     """The currently loaded map"""
 
-    folder: Union[str, bytes]
+    folder: StrOrBytes
     """Name of the game directory"""
 
-    game: Union[str, bytes]
+    game: StrOrBytes
     """Name of the game"""
 
     player_count: int
@@ -136,13 +138,13 @@ class GoldSrcInfo(metaclass=DataclsMeta):
     protocol: int
     """Protocol version used by the server"""
 
-    server_type: Union[str, bytes]
+    server_type: StrOrBytes
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
 
-    platform: Union[str, bytes]
+    platform: StrOrBytes
     """Operating system of the server
     'l', 'w' for Linux and Windows"""
 
@@ -159,16 +161,16 @@ class GoldSrcInfo(metaclass=DataclsMeta):
     """Number of bots on the server"""
 
     # Optional:
-    mod_website: Union[str, bytes]
+    mod_website: Optional[StrOrBytes]
     """URL to the mod website"""
 
-    mod_download: Union[str, bytes]
+    mod_download: Optional[StrOrBytes]
     """URL to download the mod"""
 
-    mod_version: int
+    mod_version: Optional[int]
     """Version of the mod installed on the server"""
 
-    mod_size: int
+    mod_size: Optional[int]
     """Size in bytes of the mod"""
 
     multiplayer_only: bool = False
@@ -216,6 +218,7 @@ class InfoProtocol(A2SProtocol):
     def deserialize_response(
         reader: ByteReader, response_type: int, ping: Optional[float]
     ) -> Union[SourceInfo, GoldSrcInfo]:
+        resp: Union[SourceInfo, GoldSrcInfo]
         if response_type == A2S_INFO_RESPONSE:
             resp = parse_source(reader)
         elif response_type == A2S_INFO_RESPONSE_LEGACY:
