@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union, TypeAlias
+from typing import List, Optional, Tuple, Union
 
 from a2s.a2s_async import request_async
 from a2s.a2s_protocol import A2SProtocol
@@ -9,7 +9,7 @@ from a2s.defaults import DEFAULT_ENCODING, DEFAULT_TIMEOUT
 
 A2S_PLAYER_RESPONSE = 0x44
 
-StrOrBytes: TypeAlias = Union[str, bytes]
+StrOrBytes = Union[str, bytes]
 
 
 class Player(metaclass=DataclsMeta):

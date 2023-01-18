@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, Union, TypeAlias
+from typing import Optional, Tuple, Union
 
 from a2s.a2s_async import request_async
 from a2s.a2s_sync import request_sync
@@ -14,7 +14,7 @@ from .byteio import ByteReader
 A2S_INFO_RESPONSE = 0x49
 A2S_INFO_RESPONSE_LEGACY = 0x6D
 
-StrOrBytes: TypeAlias = Union[str, bytes]
+StrOrBytes = Union[str, bytes]
 
 
 class SourceInfo(metaclass=DataclsMeta):
