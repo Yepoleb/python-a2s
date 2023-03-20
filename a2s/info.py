@@ -14,78 +14,78 @@ A2S_INFO_RESPONSE_LEGACY = 0x6D
 
 
 class SourceInfo(metaclass=DataclsMeta):
-    """Protocol version used by the server"""
     protocol: int
+    """Protocol version used by the server"""
 
-    """Display name of the server"""
     server_name: str
+    """Display name of the server"""
 
-    """The currently loaded map"""
     map_name: str
+    """The currently loaded map"""
 
-    """Name of the game directory"""
     folder: str
+    """Name of the game directory"""
 
-    """Name of the game"""
     game: str
+    """Name of the game"""
 
-    """App ID of the game required to connect"""
     app_id: int
+    """App ID of the game required to connect"""
 
-    """Number of players currently connected"""
     player_count: int
+    """Number of players currently connected"""
 
-    """Number of player slots available"""
     max_players: int
+    """Number of player slots available"""
 
-    """Number of bots on the server"""
     bot_count: int
+    """Number of bots on the server"""
 
+    server_type: str
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
-    server_type: str
 
+    platform: str
     """Operating system of the server
     'l', 'w', 'm' for Linux, Windows, macOS"""
-    platform: str
 
-    """Server requires a password to connect"""
     password_protected: bool
+    """Server requires a password to connect"""
 
-    """Server has VAC enabled"""
     vac_enabled: bool
+    """Server has VAC enabled"""
 
-    """Version of the server software"""
     version: str
+    """Version of the server software"""
 
     # Optional:
+    edf: int = 0
     """Extra data field, used to indicate if extra values are
     included in the response"""
-    edf: int = 0
 
-    """Port of the game server."""
     port: int
+    """Port of the game server."""
 
-    """Steam ID of the server"""
     steam_id: int
+    """Steam ID of the server"""
 
-    """Port of the SourceTV server"""
     stv_port: int
+    """Port of the SourceTV server"""
 
-    """Name of the SourceTV server"""
     stv_name: str
+    """Name of the SourceTV server"""
 
-    """Tags that describe the gamemode being played"""
     keywords: str
+    """Tags that describe the gamemode being played"""
 
-    """Game ID for games that have an app ID too high for 16bit."""
     game_id: int
+    """Game ID for games that have an app ID too high for 16bit."""
 
     # Client determined values:
-    """Round-trip delay time for the request in seconds"""
     ping: float
+    """Round-trip delay time for the request in seconds"""
 
     @property
     def has_port(self):
@@ -108,74 +108,74 @@ class SourceInfo(metaclass=DataclsMeta):
         return bool(self.edf & 0x01)
 
 class GoldSrcInfo(metaclass=DataclsMeta):
-    """IP Address and port of the server"""
     address: str
+    """IP Address and port of the server"""
 
-    """Display name of the server"""
     server_name: str
+    """Display name of the server"""
 
-    """The currently loaded map"""
     map_name: str
+    """The currently loaded map"""
 
-    """Name of the game directory"""
     folder: str
+    """Name of the game directory"""
 
-    """Name of the game"""
     game: str
+    """Name of the game"""
 
-    """Number of players currently connected"""
     player_count: int
+    """Number of players currently connected"""
 
-    """Number of player slots available"""
     max_players: int
+    """Number of player slots available"""
 
-    """Protocol version used by the server"""
     protocol: int
+    """Protocol version used by the server"""
 
+    server_type: str
     """Type of the server:
     'd': Dedicated server
     'l': Non-dedicated server
     'p': SourceTV relay (proxy)"""
-    server_type: str
 
+    platform: str
     """Operating system of the server
     'l', 'w' for Linux and Windows"""
-    platform: str
 
-    """Server requires a password to connect"""
     password_protected: bool
+    """Server requires a password to connect"""
 
-    """Server is running a Half-Life mod instead of the base game"""
     is_mod: bool
+    """Server is running a Half-Life mod instead of the base game"""
 
-    """Server has VAC enabled"""
     vac_enabled: bool
+    """Server has VAC enabled"""
 
-    """Number of bots on the server"""
     bot_count: int
+    """Number of bots on the server"""
 
     # Optional:
-    """URL to the mod website"""
     mod_website: str
+    """URL to the mod website"""
 
-    """URL to download the mod"""
     mod_download: str
+    """URL to download the mod"""
 
-    """Version of the mod installed on the server"""
     mod_version: int
+    """Version of the mod installed on the server"""
 
-    """Size in bytes of the mod"""
     mod_size: int
+    """Size in bytes of the mod"""
 
-    """Mod supports multiplayer only"""
     multiplayer_only: bool = False
+    """Mod supports multiplayer only"""
 
-    """Mod uses a custom DLL"""
     uses_hl_dll: bool = True
+    """Mod uses a custom DLL"""
 
     # Client determined values:
-    """Round-trip delay time for the request in seconds"""
     ping: float
+    """Round-trip delay time for the request in seconds"""
 
 
 def info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
