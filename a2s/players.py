@@ -11,18 +11,18 @@ from a2s.datacls import DataclsMeta
 A2S_PLAYER_RESPONSE = 0x44
 
 
-class Player(metaclass=DataclsMeta):
-    """Apparently an entry index, but seems to be always 0"""
+class Player(metaclass=DataclsMeta):  
     index: int
+    """Apparently an entry index, but seems to be always 0"""
 
-    """Name of the player"""
     name: str
+    """Name of the player"""
 
-    """Score of the player"""
     score: int
+    """Score of the player"""
 
-    """Time the player has been connected to the server"""
     duration: float
+    """Time the player has been connected to the server"""
 
 
 def players(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
