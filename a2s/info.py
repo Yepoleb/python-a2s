@@ -1,4 +1,6 @@
 import io
+from dataclasses import dataclass, field
+from typing import Optional
 
 from a2s.exceptions import BrokenMessageError, BufferExhaustedError
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
@@ -12,80 +14,31 @@ from a2s.datacls import DataclsMeta
 A2S_INFO_RESPONSE = 0x49
 A2S_INFO_RESPONSE_LEGACY = 0x6D
 
-
-class SourceInfo(metaclass=DataclsMeta):
-    protocol: int
+@dataclass
+class SourceInfo(): # metaclass=DataclsMeta
     """Protocol version used by the server"""
-
-    server_name: str
-    """Display name of the server"""
-
-    map_name: str
-    """The currently loaded map"""
-
-    folder: str
-    """Name of the game directory"""
-
-    game: str
-    """Name of the game"""
-
-    app_id: int
-    """App ID of the game required to connect"""
-
-    player_count: int
-    """Number of players currently connected"""
-
-    max_players: int
-    """Number of player slots available"""
-
-    bot_count: int
-    """Number of bots on the server"""
-
-    server_type: str
-    """Type of the server:
-    'd': Dedicated server
-    'l': Non-dedicated server
-    'p': SourceTV relay (proxy)"""
-
-    platform: str
-    """Operating system of the server
-    'l', 'w', 'm' for Linux, Windows, macOS"""
-
-    password_protected: bool
-    """Server requires a password to connect"""
-
-    vac_enabled: bool
-    """Server has VAC enabled"""
-
-    version: str
-    """Version of the server software"""
-
-    # Optional:
-    edf: int = 0
-    """Extra data field, used to indicate if extra values are
-    included in the response"""
-
-    port: int
-    """Port of the game server."""
-
-    steam_id: int
-    """Steam ID of the server"""
-
-    stv_port: int
-    """Port of the SourceTV server"""
-
-    stv_name: str
-    """Name of the SourceTV server"""
-
-    keywords: str
-    """Tags that describe the gamemode being played"""
-
-    game_id: int
-    """Game ID for games that have an app ID too high for 16bit."""
-
-    # Client determined values:
-    ping: float
-    """Round-trip delay time for the request in seconds"""
+    protocol: Optional[int] = None
+    server_name: Optional[str] = None
+    map_name: Optional[str] = None
+    folder: Optional[str] = None
+    game: Optional[str] = None
+    app_id: Optional[int] = None
+    player_count: Optional[int] = None
+    max_players: Optional[int] = None
+    bot_count: Optional[int] = None
+    server_type: Optional[str] = None
+    platform: Optional[str] = None
+    password_protected: Optional[bool] = None
+    vac_enabled: Optional[bool] = None
+    version: Optional[str] = None
+    edf: Optional[int] = 0
+    port: Optional[int] = None
+    steam_id: Optional[int] = None
+    stv_port: Optional[int] = None
+    stv_name: Optional[str] = None
+    keywords: Optional[str] = None
+    game_id: Optional[int] = None
+    ping: Optional[float] = None
 
     @property
     def has_port(self):
@@ -107,75 +60,30 @@ class SourceInfo(metaclass=DataclsMeta):
     def has_game_id(self):
         return bool(self.edf & 0x01)
 
-class GoldSrcInfo(metaclass=DataclsMeta):
-    address: str
+@dataclass
+class GoldSrcInfo(): # metaclass=DataclsMeta
     """IP Address and port of the server"""
-
-    server_name: str
-    """Display name of the server"""
-
-    map_name: str
-    """The currently loaded map"""
-
-    folder: str
-    """Name of the game directory"""
-
-    game: str
-    """Name of the game"""
-
-    player_count: int
-    """Number of players currently connected"""
-
-    max_players: int
-    """Number of player slots available"""
-
-    protocol: int
-    """Protocol version used by the server"""
-
-    server_type: str
-    """Type of the server:
-    'd': Dedicated server
-    'l': Non-dedicated server
-    'p': SourceTV relay (proxy)"""
-
-    platform: str
-    """Operating system of the server
-    'l', 'w' for Linux and Windows"""
-
-    password_protected: bool
-    """Server requires a password to connect"""
-
-    is_mod: bool
-    """Server is running a Half-Life mod instead of the base game"""
-
-    vac_enabled: bool
-    """Server has VAC enabled"""
-
-    bot_count: int
-    """Number of bots on the server"""
-
-    # Optional:
-    mod_website: str
-    """URL to the mod website"""
-
-    mod_download: str
-    """URL to download the mod"""
-
-    mod_version: int
-    """Version of the mod installed on the server"""
-
-    mod_size: int
-    """Size in bytes of the mod"""
-
-    multiplayer_only: bool = False
-    """Mod supports multiplayer only"""
-
-    uses_hl_dll: bool = True
-    """Mod uses a custom DLL"""
-
-    # Client determined values:
-    ping: float
-    """Round-trip delay time for the request in seconds"""
+    address: Optional[str] = None
+    server_name: Optional[str] = None
+    map_name: Optional[str] = None
+    folder: Optional[str] = None
+    game: Optional[str] = None
+    player_count: Optional[int] = None
+    max_players: Optional[int] = None
+    protocol: Optional[int] = None
+    server_type: Optional[str] = None
+    platform: Optional[str] = None
+    password_protected: Optional[bool] = None
+    is_mod: Optional[bool] = None
+    vac_enabled: Optional[bool] = None
+    bot_count: Optional[int] = None
+    mod_website: Optional[str] = None
+    mod_download: Optional[str] = None
+    mod_version: Optional[int] = None
+    mod_size: Optional[int] = None
+    multiplayer_only: Optional[bool] = False
+    uses_hl_dll: Optional[bool] = True
+    ping: Optional[float] = None
 
 
 def info(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
