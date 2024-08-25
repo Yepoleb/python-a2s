@@ -1,4 +1,6 @@
 import io
+from dataclasses import dataclass, field
+from typing import Optional
 
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
 from a2s.a2s_sync import request_sync
@@ -10,19 +12,19 @@ from a2s.datacls import DataclsMeta
 
 A2S_PLAYER_RESPONSE = 0x44
 
-
-class Player(metaclass=DataclsMeta):  
-    index: int
+@dataclass
+class Player(): # metaclass=DataclsMeta
     """Apparently an entry index, but seems to be always 0"""
+    index: Optional[int] = None
 
-    name: str
     """Name of the player"""
+    name: Optional[str] = None
 
-    score: int
     """Score of the player"""
+    score: Optional[int] = None
 
-    duration: float
     """Time the player has been connected to the server"""
+    duration: Optional[float] = None
 
 
 def players(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
