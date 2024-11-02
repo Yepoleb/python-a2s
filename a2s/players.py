@@ -1,21 +1,25 @@
 import io
+from dataclasses import dataclass
+from typing import Generic, TypeVar, overload
 
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
 from a2s.a2s_sync import request_sync
 from a2s.a2s_async import request_async
 from a2s.byteio import ByteReader
-from a2s.datacls import DataclsMeta
 
 
 
 A2S_PLAYER_RESPONSE = 0x44
 
 
-class Player(metaclass=DataclsMeta):  
+StrType = TypeVar("StrType", str, bytes)  # str (default) or bytes if encoding=None is used
+
+@dataclass
+class Player(Generic[StrType]):
     index: int
     """Apparently an entry index, but seems to be always 0"""
 
-    name: str
+    name: StrType
     """Name of the player"""
 
     score: int
@@ -25,10 +29,34 @@ class Player(metaclass=DataclsMeta):
     """Time the player has been connected to the server"""
 
 
-def players(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+@overload
+def players(address: tuple[str, int], timeout: float, encoding: str) -> list[Player[str]]:
+    ...
+
+@overload
+def players(address: tuple[str, int], timeout: float, encoding: None) -> list[Player[bytes]]:
+    ...
+
+def players(
+    address: tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str | None = DEFAULT_ENCODING
+) -> list[Player[str]] | list[Player[bytes]]:
     return request_sync(address, timeout, encoding, PlayersProtocol)
 
-async def aplayers(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+@overload
+async def aplayers(address: tuple[str, int], timeout: float, encoding: str) -> list[Player[str]]:
+    ...
+
+@overload
+async def aplayers(address: tuple[str, int], timeout: float, encoding: None) -> list[Player[bytes]]:
+    ...
+
+async def aplayers(
+    address: tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str | None = DEFAULT_ENCODING
+) -> list[Player[str]] | list[Player[bytes]]:
     return await request_async(address, timeout, encoding, PlayersProtocol)
 
 

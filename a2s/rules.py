@@ -1,20 +1,44 @@
 import io
+from typing import overload
 
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
 from a2s.a2s_sync import request_sync
 from a2s.a2s_async import request_async
 from a2s.byteio import ByteReader
-from a2s.datacls import DataclsMeta
 
 
 
 A2S_RULES_RESPONSE = 0x45
 
 
-def rules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+@overload
+def rules(address: tuple[str, int], timeout: float, encoding: str) -> dict[str, str]:
+    ...
+
+@overload
+def rules(address: tuple[str, int], timeout: float, encoding: None) -> dict[bytes, bytes]:
+    ...
+
+def rules(
+    address: tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str | None = DEFAULT_ENCODING
+) -> dict[str, str] | dict[bytes, bytes]:
     return request_sync(address, timeout, encoding, RulesProtocol)
 
-async def arules(address, timeout=DEFAULT_TIMEOUT, encoding=DEFAULT_ENCODING):
+@overload
+async def arules(address: tuple[str, int], timeout: float, encoding: str) -> dict[str, str]:
+    ...
+
+@overload
+async def arules(address: tuple[str, int], timeout: float, encoding: None) -> dict[bytes, bytes]:
+    ...
+
+async def arules(
+    address: tuple[str, int],
+    timeout: float = DEFAULT_TIMEOUT,
+    encoding: str | None = DEFAULT_ENCODING
+) -> dict[str, str] | dict[bytes, bytes]:
     return await request_async(address, timeout, encoding, RulesProtocol)
 
 
