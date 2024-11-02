@@ -90,6 +90,11 @@ Player(index=0, name='Tiny Baby Man', score=17, duration=6229.0361328125)]
 
 Half-Life 2, Half-Life, Team Fortress 2, Counter-Strike: Global Offensive, Counter-Strike 1.6, ARK: Survival Evolved, Rust
 
+## Similar Projects
+
+* [dayzquery](https://github.com/Yepoleb/dayzquery) - Module for decoding DayZ rules responses
+* [l4d2query](https://github.com/Yepoleb/l4d2query) - Module for querying additional data from L4D2 servers
+
 ## License
 
 MIT
