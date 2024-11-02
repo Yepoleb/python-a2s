@@ -9,7 +9,7 @@ Official demo application: [Sourcequery](https://sourcequery.yepoleb.at)
 
 ## Requirements
 
-Python >=3.7, no external dependencies
+Python >=3.9, no external dependencies
 
 ## Install
 
