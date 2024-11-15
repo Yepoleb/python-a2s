@@ -1,6 +1,6 @@
 import io
 from dataclasses import dataclass
-from typing import Generic, TypeVar, overload
+from typing import Generic, Union, TypeVar, overload
 
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
 from a2s.a2s_sync import request_sync
@@ -40,8 +40,8 @@ def players(address: tuple[str, int], timeout: float, encoding: None) -> list[Pl
 def players(
     address: tuple[str, int],
     timeout: float = DEFAULT_TIMEOUT,
-    encoding: str | None = DEFAULT_ENCODING
-) -> list[Player[str]] | list[Player[bytes]]:
+    encoding: Union[str, None] = DEFAULT_ENCODING
+) -> Union[list[Player[str]], list[Player[bytes]]]:
     return request_sync(address, timeout, encoding, PlayersProtocol)
 
 @overload
@@ -55,8 +55,8 @@ async def aplayers(address: tuple[str, int], timeout: float, encoding: None) -> 
 async def aplayers(
     address: tuple[str, int],
     timeout: float = DEFAULT_TIMEOUT,
-    encoding: str | None = DEFAULT_ENCODING
-) -> list[Player[str]] | list[Player[bytes]]:
+    encoding: Union[str, None] = DEFAULT_ENCODING
+) -> Union[list[Player[str]], list[Player[bytes]]]:
     return await request_async(address, timeout, encoding, PlayersProtocol)
 
 

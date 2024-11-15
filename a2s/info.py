@@ -1,6 +1,6 @@
 import io
 from dataclasses import dataclass
-from typing import Optional, Generic, TypeVar, overload
+from typing import Optional, Generic, Union, TypeVar, overload
 
 from a2s.exceptions import BrokenMessageError, BufferExhaustedError
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
@@ -186,33 +186,33 @@ class GoldSrcInfo(Generic[StrType]):
 
 
 @overload
-def info(address: tuple[str, int], timeout: float, encoding: str) -> SourceInfo[str] | GoldSrcInfo[str]:
+def info(address: tuple[str, int], timeout: float, encoding: str) -> Union[SourceInfo[str], GoldSrcInfo[str]]:
     ...
 
 @overload
-def info(address: tuple[str, int], timeout: float, encoding: None) -> SourceInfo[bytes] | GoldSrcInfo[bytes]:
+def info(address: tuple[str, int], timeout: float, encoding: None) -> Union[SourceInfo[bytes], GoldSrcInfo[bytes]]:
     ...
 
 def info(
     address: tuple[str, int],
     timeout: float = DEFAULT_TIMEOUT,
-    encoding: str | None = DEFAULT_ENCODING
-) -> SourceInfo[str] | SourceInfo[bytes] | GoldSrcInfo[str] | GoldSrcInfo[bytes]:
+    encoding: Union[str, None] = DEFAULT_ENCODING
+) -> Union[SourceInfo[str], SourceInfo[bytes], GoldSrcInfo[str], GoldSrcInfo[bytes]]:
     return request_sync(address, timeout, encoding, InfoProtocol)
 
 @overload
-async def ainfo(address: tuple[str, int], timeout: float, encoding: str) -> SourceInfo[str] | GoldSrcInfo[str]:
+async def ainfo(address: tuple[str, int], timeout: float, encoding: str) -> Union[SourceInfo[str], GoldSrcInfo[str]]:
     ...
 
 @overload
-async def ainfo(address: tuple[str, int], timeout: float, encoding: None) -> SourceInfo[bytes] | GoldSrcInfo[bytes]:
+async def ainfo(address: tuple[str, int], timeout: float, encoding: None) -> Union[SourceInfo[bytes], GoldSrcInfo[bytes]]:
     ...
 
 async def ainfo(
     address: tuple[str, int],
     timeout: float = DEFAULT_TIMEOUT,
-    encoding: str | None = DEFAULT_ENCODING
-) -> SourceInfo[str] | SourceInfo[bytes] | GoldSrcInfo[str] | GoldSrcInfo[bytes]:
+    encoding: Union[str, None] = DEFAULT_ENCODING
+) -> Union[SourceInfo[str], SourceInfo[bytes], GoldSrcInfo[str], GoldSrcInfo[bytes]]:
     return await request_async(address, timeout, encoding, InfoProtocol)
 
 

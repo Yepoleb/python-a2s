@@ -1,5 +1,5 @@
 import io
-from typing import overload
+from typing import overload, Union
 
 from a2s.defaults import DEFAULT_TIMEOUT, DEFAULT_ENCODING
 from a2s.a2s_sync import request_sync
@@ -22,8 +22,8 @@ def rules(address: tuple[str, int], timeout: float, encoding: None) -> dict[byte
 def rules(
     address: tuple[str, int],
     timeout: float = DEFAULT_TIMEOUT,
-    encoding: str | None = DEFAULT_ENCODING
-) -> dict[str, str] | dict[bytes, bytes]:
+    encoding: Union[str, None] = DEFAULT_ENCODING
+) -> Union[dict[str, str], dict[bytes, bytes]]:
     return request_sync(address, timeout, encoding, RulesProtocol)
 
 @overload
@@ -37,8 +37,8 @@ async def arules(address: tuple[str, int], timeout: float, encoding: None) -> di
 async def arules(
     address: tuple[str, int],
     timeout: float = DEFAULT_TIMEOUT,
-    encoding: str | None = DEFAULT_ENCODING
-) -> dict[str, str] | dict[bytes, bytes]:
+    encoding: Union[str, None] = DEFAULT_ENCODING
+) -> Union[dict[str, str], dict[bytes, bytes]]:
     return await request_async(address, timeout, encoding, RulesProtocol)
 
 
